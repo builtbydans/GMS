@@ -1,5 +1,29 @@
 const supabase = require("../config/db/supabase");
 
+const getCustomers = async () => {
+  const { data, error } = await supabase.from("customers").select("*");
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+const getCustomerById = async (id) => {
+  const { data, error } = await supabase
+    .from("customers")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
 const findCustomerByEmail = async (email) => {
   const { data, error } = await supabase
     .from("customers")
@@ -55,8 +79,23 @@ const createCustomer = async (customerData) => {
   return data;
 };
 
+const updateCustomerById = async (id, updatedData) => {
+  const { data, error } = await supabase
+    .from("customers")
+    .update(updatedData)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
+};
+
 module.exports = {
   findCustomerByEmail,
   findCustomerByPhone,
   createCustomer,
+  getCustomers,
+  getCustomerById,
+  updateCustomerById,
 };
