@@ -1,7 +1,11 @@
-const supabase = require("../config/db/supabase");
+const supabase = require("../../config/db/supabase");
+const AppError = require("../../errors/AppError");
 
 const getCustomers = async () => {
-  const { data, error } = await supabase.from("customers").select("*");
+  const { data, error } = await supabase
+    .from("customers")
+    .select("*")
+    .is("deleted_at", null);
 
   if (error) {
     throw new Error(error.message);
@@ -10,7 +14,7 @@ const getCustomers = async () => {
   return data;
 };
 
-const getCustomerById = async (id) => {
+const getCustomerById = async (id: string) => {
   const { data, error } = await supabase
     .from("customers")
     .select("*")
@@ -24,7 +28,7 @@ const getCustomerById = async (id) => {
   return data;
 };
 
-const findCustomerByEmail = async (email) => {
+const findCustomerByEmail = async (email: string) => {
   const { data, error } = await supabase
     .from("customers")
     .select("*")
@@ -38,7 +42,7 @@ const findCustomerByEmail = async (email) => {
   return data;
 };
 
-const findCustomerByPhone = async (phone) => {
+const findCustomerByPhone = async (phone: string) => {
   const { data, error } = await supabase
     .from("customers")
     .select("*")
@@ -52,7 +56,7 @@ const findCustomerByPhone = async (phone) => {
   return data;
 };
 
-const createCustomer = async (customerData) => {
+const createCustomer = async (customerData: Array<String>) => {
   const { data, error } = await supabase
     .from("customers")
     .insert([customerData])
@@ -61,25 +65,22 @@ const createCustomer = async (customerData) => {
 
   if (error) {
     if (error.code === "23505") {
-      const duplicateError = new Error(
+      const duplicateError = new AppError(
         "A customer with this email or phone number already exists.",
+        400,
       );
-
-      duplicateError.statusCode = 400;
 
       throw duplicateError;
     }
 
-    const dbError = new Error(error.message);
-    dbError.statusCode = 500;
-
+    const dbError = new AppError(error.message);
     throw dbError;
   }
 
   return data;
 };
 
-const updateCustomerById = async (id, updatedData) => {
+const updateCustomerById = async (id: string, updatedData: string) => {
   const { data, error } = await supabase
     .from("customers")
     .update(updatedData)
@@ -91,6 +92,23 @@ const updateCustomerById = async (id, updatedData) => {
   return data;
 };
 
+const deleteCustomerById = async (id: string) => {
+  const { data, error } = await supabase
+    .from("customers")
+    .update({
+      deleted_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    throw new AppError(error.message, 500);
+  }
+
+  return data;
+};
+
 module.exports = {
   findCustomerByEmail,
   findCustomerByPhone,
@@ -98,4 +116,5 @@ module.exports = {
   getCustomers,
   getCustomerById,
   updateCustomerById,
+  deleteCustomerById,
 };

@@ -18,7 +18,7 @@ app.use(express.json());
 app.use("/customers", customerRoutes);
 
 app.get("/test-db", async (req: any, res: any) => {
-  const { data, error } = await supabase.from("customers").select("*");
+  const { data, error } = await supabase.from("audit_logs").select("*");
 
   console.log(data);
   console.log(error);

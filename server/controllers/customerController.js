@@ -61,9 +61,25 @@ const updateCustomerById = async (req, res, next) => {
   }
 };
 
+const deleteCustomerById = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+
+    const deletedCustomer = await customerService.deleteCustomerById(id);
+
+    return res.status(200).json({
+      success: true,
+      data: deleteCustomerById,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createCustomer,
   getCustomers,
   getCustomerById,
   updateCustomerById,
+  deleteCustomerById,
 };

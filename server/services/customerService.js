@@ -1,4 +1,5 @@
-const customerRepository = require("../repositories/customerRepository");
+const customerRepository = require("../repositories/customer/customerRepository");
+const auditRepository = require("../repositories/audit/auditRepository");
 
 const getCustomers = async () => {
   return customerRepository.getCustomers();
@@ -25,26 +26,33 @@ const createCustomer = async (customerData) => {
   email = email?.trim().toLowerCase();
 
   if (!first_name || !last_name) {
-    const error = new Error("First name and last name are required");
-    error.statusCode = 400;
-    throw error;
+    throw new AppError("Customer not found", 404);
   }
 
   const existingCustomer = await customerRepository.findCustomerByEmail(email);
 
   if (existingCustomer) {
-    const error = new Error("A customer with this email already exists");
-
-    error.statusCode = 400;
-    throw error;
+    throw new AppError("Email already in use", 400);
   }
 
-  return customerRepository.createCustomer({
+  console.log("auditRepository:", auditRepository);
+
+  const customer = await customerRepository.createCustomer({
     first_name,
     last_name,
     phone,
     email,
   });
+
+  await auditRepository.createAuditLog({
+    entity_type: "customer",
+    entity_id: customer.id,
+    action: "CREATE",
+    old_value: null,
+    new_value: customer,
+  });
+
+  return customer;
 };
 
 const updateCustomerById = async (id, updatedData) => {
@@ -113,9 +121,20 @@ const updateCustomerById = async (id, updatedData) => {
   return customerRepository.updateCustomerById(id, sanitisedData);
 };
 
+const deleteCustomerById = async (id) => {
+  const customer = await customerRepository.deleteCustomerById(id);
+
+  if (!customer) {
+    throw new AppError("Customer not found", 404);
+  }
+
+  return customer;
+};
+
 module.exports = {
   createCustomer,
   getCustomers,
   getCustomerById,
   updateCustomerById,
+  deleteCustomerById,
 };
