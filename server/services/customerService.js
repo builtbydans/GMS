@@ -1,5 +1,6 @@
 const customerRepository = require("../repositories/customer/customerRepository");
 const auditRepository = require("../repositories/audit/auditRepository");
+const AppError = require("../errors/AppError");
 
 const getCustomers = async () => {
   return customerRepository.getCustomers();
@@ -9,9 +10,7 @@ const getCustomerById = async (id) => {
   const customer = await customerRepository.getCustomerById(id);
 
   if (!customer) {
-    const error = new Error("Customer not found");
-    error.statusCode = 404;
-    throw error;
+    throw new AppError("Customer not found", 404);
   }
 
   return customer;
@@ -26,7 +25,7 @@ const createCustomer = async (customerData) => {
   email = email?.trim().toLowerCase();
 
   if (!first_name || !last_name) {
-    throw new AppError("Customer not found", 404);
+    throw new AppError("First name and last name required", 400);
   }
 
   const existingCustomer = await customerRepository.findCustomerByEmail(email);
@@ -34,8 +33,6 @@ const createCustomer = async (customerData) => {
   if (existingCustomer) {
     throw new AppError("Email already in use", 400);
   }
-
-  console.log("auditRepository:", auditRepository);
 
   const customer = await customerRepository.createCustomer({
     first_name,
@@ -57,17 +54,13 @@ const createCustomer = async (customerData) => {
 
 const updateCustomerById = async (id, updatedData) => {
   if (!updatedData || Object.keys(updatedData).length === 0) {
-    const error = new Error("No update data provided");
-    error.statusCode = 400;
-    throw error;
+    throw new AppError("No update provided", 400);
   }
 
   const customer = await customerRepository.getCustomerById(id);
 
   if (!customer) {
-    const error = new Error("Customer not found");
-    error.statusCode = 404;
-    throw error;
+    throw new AppError("Customer not found", 404);
   }
 
   const sanitisedData = {
@@ -96,11 +89,7 @@ const updateCustomerById = async (id, updatedData) => {
     );
 
     if (existingCustomer && existingCustomer.id !== id) {
-      const error = new Error("Email already in use");
-
-      error.statusCode = 400;
-
-      throw error;
+      throw new AppError("Email already in use", 400);
     }
   }
 
@@ -110,25 +99,44 @@ const updateCustomerById = async (id, updatedData) => {
     );
 
     if (existingCustomer && existingCustomer.id !== id) {
-      const error = new Error("Phone number already in use");
-
-      error.statusCode = 400;
-
-      throw error;
+      throw new AppError("Phone number already in use", 400);
     }
   }
 
-  return customerRepository.updateCustomerById(id, sanitisedData);
+  const updatedCustomer = await customerRepository.updateCustomerById(
+    id,
+    sanitisedData,
+  );
+
+  await auditRepository.createAuditLog({
+    entity_type: "customer",
+    entity_id: id,
+    action: "UPDATE",
+    old_value: customer,
+    new_value: updatedCustomer,
+  });
+
+  return updatedCustomer;
 };
 
 const deleteCustomerById = async (id) => {
-  const customer = await customerRepository.deleteCustomerById(id);
+  const existingCustomer = await customerRepository.getCustomerById(id);
 
-  if (!customer) {
+  if (!existingCustomer) {
     throw new AppError("Customer not found", 404);
   }
 
-  return customer;
+  const deletedCustomer = await customerRepository.deleteCustomerById(id);
+
+  await auditRepository.createAuditLog({
+    entity_type: "customer",
+    entity_id: id,
+    action: "DELETE",
+    old_value: existingCustomer,
+    new_value: deletedCustomer,
+  });
+
+  return deletedCustomer;
 };
 
 module.exports = {
