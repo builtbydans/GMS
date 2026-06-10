@@ -1,4 +1,4 @@
-const customerService = require("../services/customerService");
+const customerService = require("./customerService");
 
 const getCustomers = async (req, res, next) => {
   try {

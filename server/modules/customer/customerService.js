@@ -1,6 +1,6 @@
-const customerRepository = require("../repositories/customer/customerRepository");
-const auditRepository = require("../repositories/audit/auditRepository");
-const AppError = require("../errors/AppError");
+const customerRepository = require("./customerRepository");
+const auditRepository = require("../audit/auditRepository");
+const AppError = require("../../errors/AppError");
 
 const getCustomers = async () => {
   return customerRepository.getCustomers();
