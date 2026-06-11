@@ -20,7 +20,7 @@ app.use("/jobs", jobRoutes);
 app.use("/invoices", invoiceRoutes);
 
 app.get("/test-db", async (req: any, res: any) => {
-  const { data, error } = await supabase.from("audit_logs").select("*");
+  const { data, error } = await supabase.from("customers").select("*");
 
   console.log(data);
   console.log(error);
