@@ -9,6 +9,7 @@ const path = require("path");
 const customerRoutes = require("./modules/customer/customerRoutes");
 const vehicleRoutes = require("./modules/vehicle/vehicleRoutes");
 const jobRoutes = require("./modules/job/jobRoutes");
+const invoiceRoutes = require("./modules/invoice/invoiceRoutes");
 
 app.use(cors());
 app.use(express.json());
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use("/customers", customerRoutes);
 app.use("/vehicles", vehicleRoutes);
 app.use("/jobs", jobRoutes);
+app.use("/invoices", invoiceRoutes);
 
 app.get("/test-db", async (req: any, res: any) => {
   const { data, error } = await supabase.from("audit_logs").select("*");
