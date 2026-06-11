@@ -1,13 +1,14 @@
 const vehicleRepository = require("./vehicleRepository");
 const auditRepository = require("../audit/auditRepository");
 const AppError = require("../../errors/AppError");
+import { CreateVehicleDto, UpdateVehicleDto } from "../../types/vehicle.types";
 
 const getVehicles = async () => {
   return vehicleRepository.getVehicles();
 };
 
-const createVehicle = async (vehicleData) => {
-  let = { customer_id, registration, make, model } = vehicleData;
+const createVehicle = async (vehicleData: CreateVehicleDto) => {
+  let { customer_id, registration, make, model } = vehicleData;
 
   registration = registration?.trim().toUpperCase().replace(/\s+/g, "");
   make = make?.trim().toUpperCase();
@@ -61,7 +62,7 @@ const createVehicle = async (vehicleData) => {
   return vehicle;
 };
 
-const updateVehicleById = async (id, updatedData) => {
+const updateVehicleById = async (id: string, updatedData: UpdateVehicleDto) => {
   if (!updatedData || Object.keys(updatedData).length === 0) {
     throw new AppError("No update provided", 400);
   }
@@ -115,7 +116,7 @@ const updateVehicleById = async (id, updatedData) => {
   return updatedVehicle;
 };
 
-const deleteVehicleById = async (id) => {
+const deleteVehicleById = async (id: string) => {
   const existingVehicle = await vehicleRepository.getVehicleById(id);
 
   if (!existingVehicle) {

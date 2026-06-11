@@ -1,12 +1,16 @@
 const customerRepository = require("./customerRepository");
 const auditRepository = require("../audit/auditRepository");
 const AppError = require("../../errors/AppError");
+import {
+  CreateCustomerDto,
+  UpdateCustomerDto,
+} from "../../types/customer.types";
 
 const getCustomers = async () => {
   return customerRepository.getCustomers();
 };
 
-const getCustomerById = async (id) => {
+const getCustomerById = async (id: string) => {
   const customer = await customerRepository.getCustomerById(id);
 
   if (!customer) {
@@ -16,7 +20,7 @@ const getCustomerById = async (id) => {
   return customer;
 };
 
-const createCustomer = async (customerData) => {
+const createCustomer = async (customerData: CreateCustomerDto) => {
   let { first_name, last_name, phone, email } = customerData;
 
   first_name = first_name?.trim();
@@ -52,7 +56,10 @@ const createCustomer = async (customerData) => {
   return customer;
 };
 
-const updateCustomerById = async (id, updatedData) => {
+const updateCustomerById = async (
+  id: string,
+  updatedData: UpdateCustomerDto,
+) => {
   if (!updatedData || Object.keys(updatedData).length === 0) {
     throw new AppError("No update provided", 400);
   }
@@ -119,7 +126,7 @@ const updateCustomerById = async (id, updatedData) => {
   return updatedCustomer;
 };
 
-const deleteCustomerById = async (id) => {
+const deleteCustomerById = async (id: string) => {
   const existingCustomer = await customerRepository.getCustomerById(id);
 
   if (!existingCustomer) {

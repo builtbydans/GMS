@@ -1,6 +1,7 @@
+import { Request, Response, NextFunction } from "express";
 const vehicleService = require("./vehicleService");
 
-const getVehicles = async (req, res, next) => {
+const getVehicles = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const vehicles = await vehicleService.getVehicles();
 
@@ -13,7 +14,11 @@ const getVehicles = async (req, res, next) => {
   }
 };
 
-const createVehicle = async (req, res, next) => {
+const createVehicle = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const vehicleData = req.body;
 
@@ -28,7 +33,11 @@ const createVehicle = async (req, res, next) => {
   }
 };
 
-const updateVehicle = async (req, res, next) => {
+const updateVehicle = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const id = req.params.id;
     const updatedVehicleData = req.body;
@@ -46,7 +55,11 @@ const updateVehicle = async (req, res, next) => {
   }
 };
 
-const deleteVehicle = async (req, res, next) => {
+const deleteVehicle = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const id = req.params.id;
 

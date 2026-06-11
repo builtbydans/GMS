@@ -1,6 +1,11 @@
+import { Request, Response, NextFunction } from "express";
 const customerService = require("./customerService");
 
-const getCustomers = async (req, res, next) => {
+const getCustomers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const customers = await customerService.getCustomers();
 
@@ -13,7 +18,11 @@ const getCustomers = async (req, res, next) => {
   }
 };
 
-const getCustomerById = async (req, res, next) => {
+const getCustomerById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const id = req.params.id;
     const customer = await customerService.getCustomerById(id);
@@ -27,7 +36,11 @@ const getCustomerById = async (req, res, next) => {
   }
 };
 
-const createCustomer = async (req, res, next) => {
+const createCustomer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const customerData = req.body;
 
@@ -42,7 +55,11 @@ const createCustomer = async (req, res, next) => {
   }
 };
 
-const updateCustomerById = async (req, res, next) => {
+const updateCustomerById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const id = req.params.id;
     const updatedData = req.body;
@@ -61,7 +78,11 @@ const updateCustomerById = async (req, res, next) => {
   }
 };
 
-const deleteCustomerById = async (req, res, next) => {
+const deleteCustomerById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const id = req.params.id;
 
@@ -69,7 +90,7 @@ const deleteCustomerById = async (req, res, next) => {
 
     return res.status(200).json({
       success: true,
-      data: deleteCustomerById,
+      data: deletedCustomer,
     });
   } catch (error) {
     next(error);

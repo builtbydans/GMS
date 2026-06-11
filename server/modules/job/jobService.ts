@@ -1,34 +1,21 @@
 const jobRepository = require("./jobRepository");
 const auditRepository = require("../audit/auditRepository");
 const AppError = require("../../errors/AppError");
+import { CreateJobDto, UpdateJobDto } from "../../types/job.types";
 
 const getJobs = async () => {
   return jobRepository.getJobs();
 };
 
-const createJob = async (jobData: any) => {
-  let {
-    vehicle_id,
-    job_number,
-    title,
-    description,
-    status,
-    estimated_cost,
-    actual_cost,
-  } = jobData;
+const createJob = async (jobData: CreateJobDto) => {
+  let { vehicle_id, title, description, estimated_cost } = jobData;
 
   title = title?.trim();
 
   description = description?.trim();
 
-  status = status?.trim().toUpperCase() || "BOOKED";
-
   if (!vehicle_id) {
     throw new AppError("Vehicle ID is required", 400);
-  }
-
-  if (!job_number) {
-    throw new AppError("Job number is required", 400);
   }
 
   if (!title) {
@@ -39,18 +26,11 @@ const createJob = async (jobData: any) => {
     throw new AppError("Estimated cost cannot be negative", 400);
   }
 
-  if (actual_cost !== undefined && actual_cost < 0) {
-    throw new AppError("Actual cost cannot be negative", 400);
-  }
-
   const job = await jobRepository.createJob({
     vehicle_id,
-    job_number,
     title,
     description,
-    status,
     estimated_cost,
-    actual_cost,
   });
 
   await auditRepository.createAuditLog({
@@ -64,7 +44,7 @@ const createJob = async (jobData: any) => {
   return job;
 };
 
-const updateJobById = async (id: string, updatedData: any) => {
+const updateJobById = async (id: string, updatedData: UpdateJobDto) => {
   if (!updatedData || Object.keys(updatedData).length === 0) {
     throw new AppError("No update provided", 400);
   }
