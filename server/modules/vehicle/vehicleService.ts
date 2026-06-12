@@ -7,6 +7,16 @@ const getVehicles = async () => {
   return vehicleRepository.getVehicles();
 };
 
+const getVehiclesByCustomerId = async (customerId: string) => {
+  const vehicles = await vehicleRepository.getVehiclesByCustomerId(customerId);
+
+  if (!vehicles) {
+    throw new AppError("No vehicles found for this customer", 404);
+  }
+
+  return vehicles;
+};
+
 const createVehicle = async (vehicleData: CreateVehicleDto) => {
   let { customer_id, registration, make, model } = vehicleData;
 
@@ -138,6 +148,7 @@ const deleteVehicleById = async (id: string) => {
 
 module.exports = {
   getVehicles,
+  getVehiclesByCustomerId,
   createVehicle,
   updateVehicleById,
   deleteVehicleById,

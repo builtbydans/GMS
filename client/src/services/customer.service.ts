@@ -1,4 +1,4 @@
-import { CreateCustomerDto } from "@/types/customer.types";
+import { CreateCustomerDto, CustomerData } from "@/types/customer.types";
 
 const API_URL = "http://localhost:3000";
 
@@ -16,4 +16,60 @@ export const createCustomer = async (customerData: CreateCustomerDto) => {
   }
 
   return response.json();
+};
+
+export const getCustomers = async () => {
+  const response = await fetch(`${API_URL}/customers`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch customers");
+  }
+
+  const result = await response.json();
+  return result.data;
+};
+
+export const getCustomerById = async (id: string): Promise<CustomerData> => {
+  const response = await fetch(`${API_URL}/customers/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch customer");
+  }
+
+  const result = await response.json();
+
+  return result.data;
+};
+
+export const getCustomerVehicleById = async (
+  id: string,
+): Promise<CustomerData> => {
+  const response = await fetch(`${API_URL}/customers/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch customer");
+  }
+
+  const result = await response.json();
+
+  return result.data;
 };

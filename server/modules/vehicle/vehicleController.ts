@@ -14,6 +14,25 @@ const getVehicles = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const getVehiclesByCustomerId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { customerId } = req.params;
+
+    const vehicles = await vehicleService.getVehiclesByCustomerId(customerId);
+
+    return res.status(200).json({
+      success: true,
+      data: vehicles,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const createVehicle = async (
   req: Request,
   res: Response,
@@ -76,6 +95,7 @@ const deleteVehicle = async (
 
 module.exports = {
   getVehicles,
+  getVehiclesByCustomerId,
   createVehicle,
   updateVehicle,
   deleteVehicle,

@@ -1,16 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { createCustomer } from "@/services/customer.service";
-import { CreateCustomerDto } from "@/types/customer.types";
+import { CreateVehicleDto, VehicleFormData } from "@/types/vehicle.types";
+import { createVehicle } from "@/services/vehicle.service";
 import { Button } from "../ui/button";
 
-export const CreateCustomerForm = () => {
-  const [formData, setFormData] = useState<CreateCustomerDto>({
-    first_name: "",
-    last_name: "",
-    email: "",
-    phone: "",
+type CreateVehicleFormProps = {
+  customerId: string;
+};
+
+export const CreateVehicleForm = ({ customerId }: CreateVehicleFormProps) => {
+  const [formData, setFormData] = useState<VehicleFormData>({
+    registration: "",
+    make: "",
+    model: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -28,17 +31,20 @@ export const CreateCustomerForm = () => {
     try {
       setLoading(true);
 
-      const result = await createCustomer(formData);
+      const vehicleData: CreateVehicleDto = {
+        customer_id: customerId,
+        ...formData,
+      };
 
+      const result = await createVehicle(vehicleData);
       console.log(result);
 
-      alert("Customer created!");
+      alert("Vehicle created!");
 
       setFormData({
-        first_name: "",
-        last_name: "",
-        email: "",
-        phone: "",
+        registration: "",
+        make: "",
+        model: "",
       });
     } catch (error) {
       console.error(error);
@@ -52,33 +58,25 @@ export const CreateCustomerForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
       <input
-        name="first_name"
-        placeholder="First Name"
-        value={formData.first_name}
+        name="registration"
+        placeholder="Registration"
+        value={formData.registration}
         onChange={handleChange}
         className="border p-2 w-full rounded"
       />
 
       <input
-        name="last_name"
-        placeholder="Last Name"
-        value={formData.last_name}
+        name="make"
+        placeholder="Make"
+        value={formData.make}
         onChange={handleChange}
         className="border p-2 w-full rounded"
       />
 
       <input
-        name="email"
-        placeholder="Email"
-        value={formData.email}
-        onChange={handleChange}
-        className="border p-2 w-full rounded"
-      />
-
-      <input
-        name="phone"
-        placeholder="Phone"
-        value={formData.phone}
+        name="model"
+        placeholder="Model"
+        value={formData.model}
         onChange={handleChange}
         className="border p-2 w-full rounded"
       />
@@ -89,7 +87,7 @@ export const CreateCustomerForm = () => {
         disabled={loading}
         className="bg-black text-white px-4 py-2 rounded"
       >
-        {loading ? "Creating..." : "Create Customer"}
+        {loading ? "Creating..." : "Create Vehicle"}
       </Button>
     </form>
   );

@@ -19,44 +19,44 @@ app.use("/vehicles", vehicleRoutes);
 app.use("/jobs", jobRoutes);
 app.use("/invoices", invoiceRoutes);
 
-app.get("/test-db", async (req: any, res: any) => {
-  const { data, error } = await supabase.from("customers").select("*");
+// app.get("/test-db", async (req: any, res: any) => {
+//   const { data, error } = await supabase.from("customers").select("*");
 
-  console.log(data);
-  console.log(error);
+//   console.log(data);
+//   console.log(error);
 
-  if (error) {
-    return res.status(500).json(error);
-  }
+//   if (error) {
+//     return res.status(500).json(error);
+//   }
 
-  res.json(data);
-});
+//   res.json(data);
+// });
 
-app.get("/test-vehicles", async (req: any, res: any) => {
-  const { data, error } = await supabase.from("vehicles").select("*");
+// app.get("/test-vehicles", async (req: any, res: any) => {
+//   const { data, error } = await supabase.from("vehicles").select("*");
 
-  console.log(data);
-  console.log(error);
+//   console.log(data);
+//   console.log(error);
 
-  if (error) {
-    return res.status(500).json(error);
-  }
+//   if (error) {
+//     return res.status(500).json(error);
+//   }
 
-  res.json(data);
-});
+//   res.json(data);
+// });
 
-app.get("/test-jobs", async (req: any, res: any) => {
-  const { data, error } = await supabase.from("jobs").select("*");
+// app.get("/test-jobs", async (req: any, res: any) => {
+//   const { data, error } = await supabase.from("jobs").select("*");
 
-  console.log(data);
-  console.log(error);
+//   console.log(data);
+//   console.log(error);
 
-  if (error) {
-    return res.status(500).json(error);
-  }
+//   if (error) {
+//     return res.status(500).json(error);
+//   }
 
-  res.json(data);
-});
+//   res.json(data);
+// });
 
 app.get("/", (req: any, res: any) => {
   res.send("Server API is running");

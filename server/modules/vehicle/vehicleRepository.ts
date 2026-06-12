@@ -28,6 +28,19 @@ const getVehicleById = async (id: string) => {
   return data;
 };
 
+const getVehiclesByCustomerId = async (customerId: string) => {
+  const { data, error } = await supabase
+    .from("vehicles")
+    .select("*")
+    .eq("customer_id", customerId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
 const createVehicle = async (vehicleData: any) => {
   const { data, error } = await supabase
     .from("vehicles")
@@ -98,6 +111,7 @@ const deleteVehicleById = async (id: string) => {
 module.exports = {
   getVehicles,
   getVehicleById,
+  getVehiclesByCustomerId,
   createVehicle,
   findVehicleByReg,
   updateVehicleById,
