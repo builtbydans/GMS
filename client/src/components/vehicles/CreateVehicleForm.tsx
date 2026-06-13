@@ -4,12 +4,15 @@ import { useState } from "react";
 import { CreateVehicleDto, VehicleFormData } from "@/types/vehicle.types";
 import { createVehicle } from "@/services/vehicle.service";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 type CreateVehicleFormProps = {
   customerId: string;
 };
 
 export const CreateVehicleForm = ({ customerId }: CreateVehicleFormProps) => {
+  const router = useRouter();
+
   const [formData, setFormData] = useState<VehicleFormData>({
     registration: "",
     make: "",
@@ -25,7 +28,7 @@ export const CreateVehicleForm = ({ customerId }: CreateVehicleFormProps) => {
     });
   };
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -36,10 +39,10 @@ export const CreateVehicleForm = ({ customerId }: CreateVehicleFormProps) => {
         ...formData,
       };
 
-      const result = await createVehicle(vehicleData);
-      console.log(result);
-
+      await createVehicle(vehicleData);
       alert("Vehicle created!");
+
+      router.refresh();
 
       setFormData({
         registration: "",

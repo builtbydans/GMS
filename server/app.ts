@@ -10,6 +10,7 @@ const customerRoutes = require("./modules/customer/customerRoutes");
 const vehicleRoutes = require("./modules/vehicle/vehicleRoutes");
 const jobRoutes = require("./modules/job/jobRoutes");
 const invoiceRoutes = require("./modules/invoice/invoiceRoutes");
+const dashboardRoutes = require("./modules/dashboard/dashboardRoutes");
 
 app.use(cors());
 app.use(express.json());
@@ -18,6 +19,7 @@ app.use("/customers", customerRoutes);
 app.use("/vehicles", vehicleRoutes);
 app.use("/jobs", jobRoutes);
 app.use("/invoices", invoiceRoutes);
+app.use("/dashboard", dashboardRoutes);
 
 // app.get("/test-db", async (req: any, res: any) => {
 //   const { data, error } = await supabase.from("customers").select("*");
