@@ -73,3 +73,22 @@ export const getCustomerVehicleById = async (
 
   return result.data;
 };
+
+export const editCustomerById = async (
+  id: string,
+  customerData: CreateCustomerDto,
+) => {
+  const response = await fetch(`${API_URL}/customers/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(customerData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create customer");
+  }
+
+  return response.json();
+};

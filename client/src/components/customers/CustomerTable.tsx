@@ -37,6 +37,9 @@ export function CustomerTable({ customers }: CustomerTableProps) {
             <TableHead className="font-semibold text-slate-900 dark:text-slate-50">
               View Customers
             </TableHead>
+            <TableHead className="font-semibold text-slate-900 dark:text-slate-50">
+              Edit Customer
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -70,6 +73,13 @@ export function CustomerTable({ customers }: CustomerTableProps) {
                 <TableCell className="text-slate-600 dark:text-slate-400">
                   <Button asChild variant="outline">
                     <Link href={`/customers/${customer.id}`}>View</Link>
+                  </Button>
+                </TableCell>
+                <TableCell className="text-slate-600 dark:text-slate-400">
+                  <Button asChild variant="outline">
+                    <Link href={`/customers/${customer.id}/edit`}>
+                      Edit Customer
+                    </Link>
                   </Button>
                 </TableCell>
               </TableRow>
