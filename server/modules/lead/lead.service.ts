@@ -1,4 +1,4 @@
-import { CreateLeadDto } from "./lead.types";
+import { CreateLeadDto } from "../../types/lead.types";
 const AppError = require("../../errors/AppError");
 const customerService = require("../customer/customer.service");
 const vehicleService = require("../vehicle/vehicle.service");

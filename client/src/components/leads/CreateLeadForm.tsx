@@ -1,23 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { CreateCustomerDto, CustomerData } from "@/types/customer.types";
-import { editCustomerById } from "@/services/customer.service";
+import { createLead } from "@/services/lead.service";
+import { CreateLeadDto } from "@/types/lead.types";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-interface Props {
-  customer: CustomerData;
-}
-
-const EditCustomerForm = ({ customer }: Props) => {
+const CreateLeadForm = () => {
   const router = useRouter();
-  const [formData, setFormData] = useState<CreateCustomerDto>({
-    first_name: customer.first_name,
-    last_name: customer.last_name,
-    email: customer.email,
-    phone: customer.phone,
+  const [formData, setFormData] = useState<CreateLeadDto>({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    registration: "",
+    make: "",
+    model: "",
+    message: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -30,19 +30,22 @@ const EditCustomerForm = ({ customer }: Props) => {
     }));
   };
 
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
       setLoading(true);
 
-      await editCustomerById(customer.id, formData);
+      await createLead(formData);
 
-      toast("Customer successfully edited", { position: "top-center" });
-      router.push(`/customers/${customer.id}`);
+      toast("Your enquiry has been sent to the GMS Team", {
+        position: "top-center",
+      });
+      router.push(`/`);
     } catch (error) {
       console.error(error);
-      alert("Failed to edit customer");
+
+      alert("Failed to create customer");
     } finally {
       setLoading(false);
     }
@@ -51,6 +54,7 @@ const EditCustomerForm = ({ customer }: Props) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
       <input
+        type="text"
         name="first_name"
         placeholder="First Name"
         value={formData.first_name}
@@ -59,6 +63,7 @@ const EditCustomerForm = ({ customer }: Props) => {
       />
 
       <input
+        type="text"
         name="last_name"
         placeholder="Last Name"
         value={formData.last_name}
@@ -67,6 +72,7 @@ const EditCustomerForm = ({ customer }: Props) => {
       />
 
       <input
+        type="email"
         name="email"
         placeholder="Email"
         value={formData.email}
@@ -75,11 +81,48 @@ const EditCustomerForm = ({ customer }: Props) => {
       />
 
       <input
+        type="tel"
         name="phone"
         placeholder="Phone"
         value={formData.phone}
         onChange={handleChange}
         className="border p-2 w-full rounded"
+      />
+
+      <input
+        type="text"
+        name="registration"
+        placeholder="Vehicle Registration"
+        value={formData.registration}
+        onChange={handleChange}
+        className="border p-2 w-full rounded"
+      />
+
+      <input
+        type="text"
+        name="make"
+        placeholder="Vehicle Make"
+        value={formData.make}
+        onChange={handleChange}
+        className="border p-2 w-full rounded"
+      />
+
+      <input
+        type="text"
+        name="model"
+        placeholder="Vehicle Model"
+        value={formData.model}
+        onChange={handleChange}
+        className="border p-2 w-full rounded"
+      />
+
+      <textarea
+        name="message"
+        placeholder="Your Message"
+        value={formData.message}
+        onChange={handleChange}
+        rows={4}
+        className="border p-2 w-full rounded resize-none"
       />
 
       <Button
@@ -88,10 +131,10 @@ const EditCustomerForm = ({ customer }: Props) => {
         disabled={loading}
         className="bg-black text-white px-4 py-2 rounded"
       >
-        {loading ? "Editing..." : "Edit Customer"}
+        {loading ? "Creating..." : "Send Enquiry"}
       </Button>
     </form>
   );
 };
 
-export default EditCustomerForm;
+export default CreateLeadForm;
