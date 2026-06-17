@@ -5,6 +5,7 @@ const getCustomers = async () => {
   const { data, error } = await supabase
     .from("customers")
     .select("*")
+    .order("created_at", { ascending: false })
     .is("deleted_at", null);
 
   if (error) {

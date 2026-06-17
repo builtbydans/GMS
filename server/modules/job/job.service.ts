@@ -8,9 +8,9 @@ const getJobs = async () => {
 };
 
 const createJob = async (jobData: CreateJobDto) => {
-  let { vehicle_id, title, description, estimated_cost } = jobData;
+  let { vehicle_id, job_type, description, estimated_cost } = jobData;
 
-  title = title?.trim();
+  job_type = job_type?.trim();
 
   description = description?.trim();
 
@@ -18,8 +18,8 @@ const createJob = async (jobData: CreateJobDto) => {
     throw new AppError("Vehicle ID is required", 400);
   }
 
-  if (!title) {
-    throw new AppError("Title is required", 400);
+  if (!job_type) {
+    throw new AppError("Job type is required", 400);
   }
 
   if (estimated_cost !== undefined && estimated_cost < 0) {
@@ -28,7 +28,7 @@ const createJob = async (jobData: CreateJobDto) => {
 
   const job = await jobRepository.createJob({
     vehicle_id,
-    title,
+    job_type,
     description,
     estimated_cost,
   });
