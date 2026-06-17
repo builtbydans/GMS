@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-const jobService = require("./jobService");
+const jobService = require("./job.service");
 
 const getJobs = async (req: Request, res: Response, next: NextFunction) => {
   try {

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-const dashboardService = require("./dashboardService");
+const dashboardService = require("./dashboard.service");
 
 const getDashboardStats = async (
   req: Request,

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-const vehicleService = require("./vehicleService");
+const vehicleService = require("./vehicle.service");
 
 const getVehicles = async (req: Request, res: Response, next: NextFunction) => {
   try {

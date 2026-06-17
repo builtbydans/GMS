@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-const invoiceService = require("./invoiceService");
+const invoiceService = require("./invoice.service");
 
 const getInvoices = async (req: Request, res: Response, next: NextFunction) => {
   try {

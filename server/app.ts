@@ -6,11 +6,12 @@ const app = express();
 
 const cors = require("cors");
 const path = require("path");
-const customerRoutes = require("./modules/customer/customerRoutes");
-const vehicleRoutes = require("./modules/vehicle/vehicleRoutes");
-const jobRoutes = require("./modules/job/jobRoutes");
-const invoiceRoutes = require("./modules/invoice/invoiceRoutes");
-const dashboardRoutes = require("./modules/dashboard/dashboardRoutes");
+const customerRoutes = require("./modules/customer/customer.routes");
+const vehicleRoutes = require("./modules/vehicle/vehicle.routes");
+const jobRoutes = require("./modules/job/job.routes");
+const invoiceRoutes = require("./modules/invoice/invoice.routes");
+const dashboardRoutes = require("./modules/dashboard/dashboard.routes");
+const leadRoutes = require("./modules/lead/lead.routes");
 
 app.use(cors());
 app.use(express.json());
@@ -20,6 +21,7 @@ app.use("/vehicles", vehicleRoutes);
 app.use("/jobs", jobRoutes);
 app.use("/invoices", invoiceRoutes);
 app.use("/dashboard", dashboardRoutes);
+app.use("/leads", leadRoutes);
 
 // app.get("/test-db", async (req: any, res: any) => {
 //   const { data, error } = await supabase.from("customers").select("*");

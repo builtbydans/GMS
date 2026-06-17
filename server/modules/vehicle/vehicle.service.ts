@@ -1,5 +1,5 @@
-const vehicleRepository = require("./vehicleRepository");
-const auditRepository = require("../audit/auditRepository");
+const vehicleRepository = require("./vehicle.repository");
+const auditRepository = require("../audit/audit.repository");
 const AppError = require("../../errors/AppError");
 import { CreateVehicleDto, UpdateVehicleDto } from "../../types/vehicle.types";
 

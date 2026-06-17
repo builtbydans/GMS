@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-const customerService = require("./customerService");
+const customerService = require("./customer.service");
 
 const getCustomers = async (
   req: Request,

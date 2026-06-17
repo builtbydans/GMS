@@ -1,4 +1,4 @@
-const dashboardRepository = require("./dashboardRepository");
+const dashboardRepository = require("./dashboard.repository");
 const AppError = require("../../errors/AppError");
 
 const getDashboardStats = async () => {

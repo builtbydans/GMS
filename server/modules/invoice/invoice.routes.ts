@@ -5,7 +5,7 @@ const {
   getInvoices,
   createInvoice,
   updateInvoice,
-} = require("./invoiceController");
+} = require("./invoice.controller");
 
 router.get("/", getInvoices);
 

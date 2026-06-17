@@ -7,7 +7,7 @@ const {
   getCustomerById,
   updateCustomerById,
   deleteCustomerById,
-} = require("./customerController");
+} = require("./customer.controller");
 
 router.get("/", getCustomers);
 router.get("/:id", getCustomerById);

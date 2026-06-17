@@ -7,7 +7,7 @@ const {
   createVehicle,
   updateVehicle,
   deleteVehicle,
-} = require("./vehicleController");
+} = require("./vehicle.controller");
 
 router.get("/", getVehicles);
 router.get("/customer/:customerId", getVehiclesByCustomerId);

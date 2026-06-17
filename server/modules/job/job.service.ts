@@ -1,5 +1,5 @@
-const jobRepository = require("./jobRepository");
-const auditRepository = require("../audit/auditRepository");
+const jobRepository = require("./job.repository");
+const auditRepository = require("../audit/audit.repository");
 const AppError = require("../../errors/AppError");
 import { CreateJobDto, UpdateJobDto } from "../../types/job.types";
 
@@ -8,29 +8,18 @@ const getJobs = async () => {
 };
 
 const createJob = async (jobData: CreateJobDto) => {
-  let { vehicle_id, job_type, description, estimated_cost } = jobData;
+  let { vehicle_id, job_type, description } = jobData;
 
   job_type = job_type?.trim();
-
   description = description?.trim();
 
   if (!vehicle_id) {
     throw new AppError("Vehicle ID is required", 400);
   }
 
-  if (!job_type) {
-    throw new AppError("Job type is required", 400);
-  }
-
-  if (estimated_cost !== undefined && estimated_cost < 0) {
-    throw new AppError("Estimated cost cannot be negative", 400);
-  }
-
   const job = await jobRepository.createJob({
     vehicle_id,
-    job_type,
     description,
-    estimated_cost,
   });
 
   await auditRepository.createAuditLog({

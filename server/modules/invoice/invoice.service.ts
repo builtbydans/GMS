@@ -1,6 +1,6 @@
-const invoiceRepository = require("./invoiceRepository");
-const jobRepository = require("../job/jobRepository");
-const auditRepository = require("../audit/auditRepository");
+const invoiceRepository = require("./invoice.repository");
+const jobRepository = require("../job/job.repository");
+const auditRepository = require("../audit/audit.repository");
 const AppError = require("../../errors/AppError");
 
 import {
