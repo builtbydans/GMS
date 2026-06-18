@@ -11,15 +11,21 @@ export interface CreateLeadDto {
   message: string;
 }
 
-export interface LeadData {
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string;
+export interface LeadSummaryDto {
+  id: string;
+  job_number: string;
+  description: string;
+  status: string;
+  created_at: string;
 
-  registration: string;
-  make: string;
-  model: string;
+  vehicles: {
+    registration: string;
+    make: string;
+    model: string;
 
-  message: string;
+    customers: {
+      first_name: string;
+      last_name: string;
+    };
+  };
 }
