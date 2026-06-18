@@ -10,3 +10,16 @@ export interface CreateLeadDto {
 
   message: string;
 }
+
+export interface LeadData {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+
+  registration: string;
+  make: string;
+  model: string;
+
+  message: string;
+}

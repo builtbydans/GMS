@@ -4,6 +4,10 @@ const customerService = require("../customer/customer.service");
 const vehicleService = require("../vehicle/vehicle.service");
 const jobService = require("../job/job.service");
 
+const getLeads = async () => {
+  return await jobService.getLeads();
+};
+
 const createLead = async (leadData: CreateLeadDto) => {
   let {
     first_name,
@@ -77,4 +81,5 @@ const createLead = async (leadData: CreateLeadDto) => {
 
 module.exports = {
   createLead,
+  getLeads,
 };

@@ -2,6 +2,19 @@ import { Request, Response, NextFunction } from "express";
 
 const leadService = require("./lead.service");
 
+const getLeads = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const leads = await leadService.getLeads();
+
+    return res.status(200).json({
+      success: true,
+      data: leads,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const createLead = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const leadData = req.body;
@@ -18,4 +31,5 @@ const createLead = async (req: Request, res: Response, next: NextFunction) => {
 
 module.exports = {
   createLead,
+  getLeads,
 };

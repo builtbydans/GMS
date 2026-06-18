@@ -14,6 +14,33 @@ const getJobs = async () => {
   return data;
 };
 
+const getLeads = async () => {
+  const { data, error } = await supabase
+    .from("jobs")
+    .select(
+      `
+        *,
+        vehicles (
+          registration,
+          make,
+          model,
+          customers (
+            first_name,
+            last_name
+          )
+        )
+      `,
+    )
+    .is("deleted_at", null)
+    .eq("status", "LEAD");
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
 const getJobById = async (id: string) => {
   const { data, error } = await supabase
     .from("jobs")
@@ -80,4 +107,5 @@ module.exports = {
   createJob,
   updateJobById,
   deleteJobById,
+  getLeads,
 };

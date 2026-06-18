@@ -4,7 +4,11 @@ const AppError = require("../../errors/AppError");
 import { CreateJobDto, UpdateJobDto } from "../../types/job.types";
 
 const getJobs = async () => {
-  return jobRepository.getJobs();
+  return await jobRepository.getJobs();
+};
+
+const getLeads = async () => {
+  return await jobRepository.getLeads();
 };
 
 const createJob = async (jobData: CreateJobDto) => {
@@ -79,6 +83,7 @@ const deleteJobById = async (id: string) => {
 
 module.exports = {
   getJobs,
+  getLeads,
   createJob,
   updateJobById,
   deleteJobById,
