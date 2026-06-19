@@ -29,6 +29,25 @@ const getLeadById = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const markLeadAsLost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const id = req.params.id;
+
+    const lostLead = await leadService.markLeadAsLost(id);
+
+    return res.status(200).json({
+      success: true,
+      data: lostLead,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const quoteLead = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
@@ -63,4 +82,5 @@ module.exports = {
   getLeads,
   getLeadById,
   quoteLead,
+  markLeadAsLost,
 };

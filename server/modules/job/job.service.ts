@@ -38,6 +38,26 @@ const quoteLead = async (id: string, data: QuoteLeadDto) => {
   return await jobRepository.quoteLead(id, data);
 };
 
+const markLeadAsLost = async (id: string) => {
+  const lead = await jobRepository.getLeadById(id);
+
+  if (!lead) {
+    throw new AppError("Lead not found", 404);
+  }
+
+  if (lead.status === "LOST") {
+    throw new AppError("Lead is already marked as lost", 400);
+  }
+
+  const allowedStatuses = ["LEAD", "QUOTED"];
+
+  if (!allowedStatuses.includes(lead.status)) {
+    throw new AppError(`Cannot mark a ${lead.status} lead as lost`, 400);
+  }
+
+  return await jobRepository.markLeadAsLost(id);
+};
+
 const createJob = async (jobData: CreateJobDto) => {
   let { vehicle_id, job_type, description } = jobData;
 
@@ -116,4 +136,5 @@ module.exports = {
   createJob,
   updateJobById,
   deleteJobById,
+  markLeadAsLost,
 };

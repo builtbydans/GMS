@@ -106,6 +106,22 @@ const quoteLead = async (id: string, data: QuoteLeadDto) => {
   return updatedJob;
 };
 
+const markLeadAsLost = async (id: string) => {
+  const { data, error } = await supabase
+    .from("jobs")
+    .update({
+      status: "LOST",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data;
+};
+
 const createJob = async (jobData: any) => {
   const { data, error } = await supabase
     .from("jobs")
@@ -161,4 +177,5 @@ module.exports = {
   createJob,
   updateJobById,
   deleteJobById,
+  markLeadAsLost,
 };

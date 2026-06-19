@@ -19,6 +19,10 @@ interface LeadsTableProps {
 export function LeadsTable({ leads }: LeadsTableProps) {
   return (
     <div className="w-full rounded-md border border-slate-200 dark:border-slate-800">
+      <Button asChild>
+        <Link href="/leads/new">+ New Lead</Link>
+      </Button>
+
       <Table>
         <TableHeader>
           <TableRow className="bg-slate-50 dark:bg-slate-900">

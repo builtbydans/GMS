@@ -69,3 +69,18 @@ export const quoteLead = async (id: string, quoteData: QuoteLeadDto) => {
 
   return response.json();
 };
+
+export const markLeadAsLost = async (id: string) => {
+  const response = await fetch(`${API_URL}/leads/${id}/lost`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to mark lead as lost");
+  }
+
+  return response.json();
+};

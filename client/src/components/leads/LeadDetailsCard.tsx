@@ -1,5 +1,9 @@
 import { LeadSummaryDto } from "@/types/lead.types";
 import { QuoteLeadForm } from "./QuoteLeadForm";
+import StatusBadge from "./StatusBadge";
+import { Button } from "../ui/button";
+import MarkLeadLostButton from "./MarkLeadLostButton";
+import Link from "next/link";
 
 interface LeadDetailsCardProps {
   lead: LeadSummaryDto;
@@ -9,6 +13,13 @@ export const LeadDetailsCard = ({ lead }: LeadDetailsCardProps) => {
   return (
     <div className="rounded-lg border p-6 space-y-6">
       <div>
+        <Button asChild>
+          <Link href="/leads">Return to Leads</Link>
+        </Button>
+
+        {["LEAD", "QUOTED"].includes(lead.status) && (
+          <MarkLeadLostButton leadId={lead.id} />
+        )}
         <h1 className="text-2xl font-bold">{lead.job_number}</h1>
 
         <p className="text-sm text-muted-foreground">
@@ -45,7 +56,7 @@ export const LeadDetailsCard = ({ lead }: LeadDetailsCardProps) => {
         <h2 className="font-semibold mb-2">Lead Details</h2>
 
         <div>
-          <strong>Status:</strong> {lead.status}
+          <strong>Status:</strong> <StatusBadge status={lead.status} />
         </div>
 
         <div>

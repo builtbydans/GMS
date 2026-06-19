@@ -16,6 +16,10 @@ const quoteLead = async (id: string, data: QuoteLeadDto) => {
   return await jobService.quoteLead(id, data);
 };
 
+const markLeadAsLost = async (id: string) => {
+  return await jobService.markLeadAsLost(id);
+};
+
 const createLead = async (leadData: CreateLeadDto) => {
   let {
     first_name,
@@ -92,4 +96,5 @@ module.exports = {
   getLeads,
   getLeadById,
   quoteLead,
+  markLeadAsLost,
 };
