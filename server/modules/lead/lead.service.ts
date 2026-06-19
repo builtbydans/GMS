@@ -1,4 +1,4 @@
-import { CreateLeadDto } from "../../types/lead.types";
+import { CreateLeadDto, QuoteLeadDto } from "../../types/lead.types";
 const AppError = require("../../errors/AppError");
 const customerService = require("../customer/customer.service");
 const vehicleService = require("../vehicle/vehicle.service");
@@ -6,6 +6,14 @@ const jobService = require("../job/job.service");
 
 const getLeads = async () => {
   return await jobService.getLeads();
+};
+
+const getLeadById = async (id: string) => {
+  return await jobService.getLeadById(id);
+};
+
+const quoteLead = async (id: string, data: QuoteLeadDto) => {
+  return await jobService.quoteLead(id, data);
 };
 
 const createLead = async (leadData: CreateLeadDto) => {
@@ -82,4 +90,6 @@ const createLead = async (leadData: CreateLeadDto) => {
 module.exports = {
   createLead,
   getLeads,
+  getLeadById,
+  quoteLead,
 };

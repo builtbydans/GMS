@@ -1,11 +1,26 @@
 const supabase = require("../../config/db/supabase");
 const AppError = require("../../errors/AppError");
+import { QuoteLeadDto } from "../../types/lead.types";
 
 const getJobs = async () => {
   const { data, error } = await supabase
     .from("jobs")
     .select("*")
     .is("deleted_at", null);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+const getJobById = async (id: string) => {
+  const { data, error } = await supabase
+    .from("jobs")
+    .select("*")
+    .eq("id", id)
+    .single();
 
   if (error) {
     throw new Error(error.message);
@@ -41,10 +56,25 @@ const getLeads = async () => {
   return data;
 };
 
-const getJobById = async (id: string) => {
+const getLeadById = async (id: string) => {
   const { data, error } = await supabase
     .from("jobs")
-    .select("*")
+    .select(
+      `
+      *,
+      vehicles (
+        registration,
+        make,
+        model,
+        customers (
+          first_name,
+          last_name,
+          email,
+          phone
+        )
+      )
+    `,
+    )
     .eq("id", id)
     .single();
 
@@ -53,6 +83,27 @@ const getJobById = async (id: string) => {
   }
 
   return data;
+};
+
+const quoteLead = async (id: string, data: QuoteLeadDto) => {
+  const { data: updatedJob, error } = await supabase
+    .from("jobs")
+    .update({
+      job_type: data.job_type,
+      quoted_cost: data.quoted_cost,
+      status: "QUOTED",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .is("deleted_at", null)
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return updatedJob;
 };
 
 const createJob = async (jobData: any) => {
@@ -104,8 +155,10 @@ const deleteJobById = async (id: string) => {
 module.exports = {
   getJobs,
   getJobById,
+  getLeads,
+  getLeadById,
+  quoteLead,
   createJob,
   updateJobById,
   deleteJobById,
-  getLeads,
 };

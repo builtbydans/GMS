@@ -1,4 +1,8 @@
-import { CreateLeadDto } from "@/types/lead.types";
+import {
+  CreateLeadDto,
+  LeadSummaryDto,
+  QuoteLeadDto,
+} from "@/types/lead.types";
 
 const API_URL = "http://localhost:3000";
 
@@ -32,4 +36,36 @@ export const getLeads = async () => {
 
   const result = await response.json();
   return result.data;
+};
+
+export const getLeadById = async (id: string): Promise<LeadSummaryDto> => {
+  const response = await fetch(`${API_URL}/leads/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch lead");
+  }
+
+  const result = await response.json();
+  return result.data;
+};
+
+export const quoteLead = async (id: string, quoteData: QuoteLeadDto) => {
+  const response = await fetch(`${API_URL}/leads/${id}/quote`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(quoteData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update lead");
+  }
+
+  return response.json();
 };

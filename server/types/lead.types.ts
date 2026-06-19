@@ -10,3 +10,8 @@ export interface CreateLeadDto {
 
   message: string;
 }
+
+export interface QuoteLeadDto {
+  job_type: string;
+  quoted_cost: number;
+}

@@ -2,6 +2,7 @@ const jobRepository = require("./job.repository");
 const auditRepository = require("../audit/audit.repository");
 const AppError = require("../../errors/AppError");
 import { CreateJobDto, UpdateJobDto } from "../../types/job.types";
+import { QuoteLeadDto } from "../../types/lead.types";
 
 const getJobs = async () => {
   return await jobRepository.getJobs();
@@ -9,6 +10,32 @@ const getJobs = async () => {
 
 const getLeads = async () => {
   return await jobRepository.getLeads();
+};
+
+const getLeadById = async (id: string) => {
+  return await jobRepository.getLeadById(id);
+};
+
+const quoteLead = async (id: string, data: QuoteLeadDto) => {
+  const existingLead = await jobRepository.getLeadById(id);
+
+  if (!existingLead) {
+    throw new AppError("Lead not found", 404);
+  }
+
+  if (existingLead.status !== "LEAD") {
+    throw new AppError("Only leads can be converted to quotes", 400);
+  }
+
+  if (!data.job_type?.trim()) {
+    throw new AppError("Job type is required", 400);
+  }
+
+  if (data.quoted_cost <= 0) {
+    throw new AppError("Quoted cost must be greater than 0", 400);
+  }
+
+  return await jobRepository.quoteLead(id, data);
 };
 
 const createJob = async (jobData: CreateJobDto) => {
@@ -84,6 +111,8 @@ const deleteJobById = async (id: string) => {
 module.exports = {
   getJobs,
   getLeads,
+  getLeadById,
+  quoteLead,
   createJob,
   updateJobById,
   deleteJobById,

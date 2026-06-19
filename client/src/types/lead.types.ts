@@ -17,6 +17,8 @@ export interface LeadSummaryDto {
   description: string;
   status: string;
   created_at: string;
+  job_type: string | null;
+  quoted_cost: number | null;
 
   vehicles: {
     registration: string;
@@ -26,6 +28,13 @@ export interface LeadSummaryDto {
     customers: {
       first_name: string;
       last_name: string;
+      email: string;
+      phone: string;
     };
   };
+}
+
+export interface QuoteLeadDto {
+  job_type: string;
+  quoted_cost: number;
 }

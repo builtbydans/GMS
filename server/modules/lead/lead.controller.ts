@@ -15,6 +15,35 @@ const getLeads = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const getLeadById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.params.id;
+    const lead = await leadService.getLeadById(id);
+
+    return res.status(200).json({
+      success: true,
+      data: lead,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const quoteLead = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.params.id;
+
+    const quotedLead = await leadService.quoteLead(id, req.body);
+
+    return res.status(200).json({
+      success: true,
+      data: quotedLead,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const createLead = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const leadData = req.body;
@@ -32,4 +61,6 @@ const createLead = async (req: Request, res: Response, next: NextFunction) => {
 module.exports = {
   createLead,
   getLeads,
+  getLeadById,
+  quoteLead,
 };
