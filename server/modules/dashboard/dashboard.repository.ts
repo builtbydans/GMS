@@ -1,7 +1,7 @@
-import { DashboardStatsDto } from "../../types/dashoard.types";
+import { DashboardStatsDto } from "../../types/dashboard.types";
 
 const supabase = require("../../config/db/supabase");
-const { DashboardStatsDto } = require("../../types/dashoard.types");
+const { DashboardStatsDto } = require("../../types/dashboard.types");
 
 const getDashboardStats = async (): Promise<DashboardStatsDto> => {
   const [

@@ -122,6 +122,22 @@ const markLeadAsLost = async (id: string) => {
   return data;
 };
 
+const bookLead = async (id: string) => {
+  const { data, error } = await supabase
+    .from("jobs")
+    .update({
+      status: "BOOKED",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data;
+};
+
 const createJob = async (jobData: any) => {
   const { data, error } = await supabase
     .from("jobs")
@@ -174,6 +190,7 @@ module.exports = {
   getLeads,
   getLeadById,
   quoteLead,
+  bookLead,
   createJob,
   updateJobById,
   deleteJobById,

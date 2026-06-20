@@ -58,6 +58,20 @@ const markLeadAsLost = async (id: string) => {
   return await jobRepository.markLeadAsLost(id);
 };
 
+const bookLead = async (id: string) => {
+  const lead = await jobRepository.getLeadById(id);
+
+  if (!lead) {
+    throw new AppError("Lead not found", 404);
+  }
+
+  if (lead.status === "BOOKED") {
+    throw new AppError("This job has already been booked", 400);
+  }
+
+  return await jobRepository.bookLead(id);
+};
+
 const createJob = async (jobData: CreateJobDto) => {
   let { vehicle_id, job_type, description } = jobData;
 
@@ -133,6 +147,7 @@ module.exports = {
   getLeads,
   getLeadById,
   quoteLead,
+  bookLead,
   createJob,
   updateJobById,
   deleteJobById,

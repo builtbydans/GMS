@@ -84,3 +84,18 @@ export const markLeadAsLost = async (id: string) => {
 
   return response.json();
 };
+
+export const bookLead = async (id: string) => {
+  const response = await fetch(`${API_URL}/leads/${id}/book`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Fail to book lead, please check status");
+  }
+
+  return response.json();
+};
