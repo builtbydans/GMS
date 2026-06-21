@@ -8,6 +8,16 @@ const getJobs = async () => {
   return await jobRepository.getJobs();
 };
 
+const getJobById = async (id: string) => {
+  const job = await jobRepository.getJobById(id);
+
+  if (!job) {
+    throw new AppError("Job not found", 404);
+  }
+
+  return job;
+};
+
 const getLeads = async () => {
   return await jobRepository.getLeads();
 };
@@ -142,8 +152,63 @@ const deleteJobById = async (id: string) => {
   return deletedJob;
 };
 
+const startJob = async (id: string) => {
+  const job = await jobRepository.getJobById(id);
+
+  if (!job) {
+    throw new AppError("Job not found", 404);
+  }
+
+  if (job.status !== "BOOKED") {
+    throw new AppError(
+      `Only BOOKED jobs can be started. Current status: ${job.status}`,
+      400,
+    );
+  }
+
+  const updatedJob = await jobRepository.startJob(id);
+
+  await auditRepository.createAuditLog({
+    entity_type: "job",
+    entity_id: id,
+    action: "START",
+    old_value: job,
+    new_value: updatedJob,
+  });
+
+  return updatedJob;
+};
+
+const completeJob = async (id: string) => {
+  const job = await jobRepository.getJobById(id);
+
+  if (!job) {
+    throw new AppError("Job not found", 404);
+  }
+
+  if (job.status !== "IN_PROGRESS") {
+    throw new AppError(
+      `Only IN_PROGRESS jobs can be completed. Current status: ${job.status}`,
+      400,
+    );
+  }
+
+  const updatedJob = await jobRepository.completeJob(id);
+
+  await auditRepository.createAuditLog({
+    entity_type: "job",
+    entity_id: id,
+    action: "COMPLETE",
+    old_value: job,
+    new_value: updatedJob,
+  });
+
+  return updatedJob;
+};
+
 module.exports = {
   getJobs,
+  getJobById,
   getLeads,
   getLeadById,
   quoteLead,
@@ -152,4 +217,6 @@ module.exports = {
   updateJobById,
   deleteJobById,
   markLeadAsLost,
+  startJob,
+  completeJob,
 };

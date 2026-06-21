@@ -1,6 +1,6 @@
 import { LeadSummaryDto } from "@/types/lead.types";
 import { QuoteLeadForm } from "./QuoteLeadForm";
-import StatusBadge from "./StatusBadge";
+import StatusBadge from "../StatusBadge";
 import { Button } from "../ui/button";
 import { formatRegistration } from "@/utils/formatRegistration";
 

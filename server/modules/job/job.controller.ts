@@ -15,6 +15,20 @@ const getJobs = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const getJobById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.params.id;
+    const job = await jobService.getJobById(id);
+
+    return res.status(200).json({
+      success: true,
+      data: job,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const createJob = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const jobData = req.body;
@@ -60,9 +74,42 @@ const deleteJob = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const startJob = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.params.id;
+
+    const startedJob = await jobService.startJob(id);
+
+    return res.status(200).json({
+      success: true,
+      data: startedJob,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const completeJob = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.params.id;
+
+    const completedJob = await jobService.completeJob(id);
+
+    return res.status(200).json({
+      success: true,
+      data: completedJob,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getJobs,
+  getJobById,
   createJob,
   updateJob,
   deleteJob,
+  startJob,
+  completeJob,
 };

@@ -3,14 +3,21 @@ const router = express.Router();
 
 const {
   getJobs,
+  getJobById,
   createJob,
   updateJob,
   deleteJob,
+  startJob,
+  completeJob,
 } = require("./job.controller");
 
 router.get("/", getJobs);
+router.get("/:id", getJobById);
 router.post("/", createJob);
-router.put("/:id", updateJob);
 router.delete("/:id", deleteJob);
+
+router.patch("/:id/start", startJob);
+router.patch("/:id", updateJob);
+router.patch("/:id/complete", completeJob);
 
 module.exports = router;

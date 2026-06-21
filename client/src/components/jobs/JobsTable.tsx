@@ -4,12 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 
 import { Button } from "../ui/button";
-import StatusBadge from "../StatusBadge";
+import StatusBadge from "@/components/StatusBadge";
 
 import { formatRelativeDate } from "@/utils/date";
 import { formatRegistration } from "@/utils/formatRegistration";
 
-import { LeadSummaryDto } from "@/types/lead.types";
+import { JobSummaryDto } from "@/types/jobs.types";
 
 import {
   Table,
@@ -20,25 +20,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-interface LeadsTableProps {
-  leads: LeadSummaryDto[];
+interface JobsTableProps {
+  jobs: JobSummaryDto[];
 }
 
-export function LeadsTable({ leads }: LeadsTableProps) {
+export function JobsTable({ jobs }: JobsTableProps) {
   const [statusFilter, setStatusFilter] = useState("ALL");
 
-  const filteredLeads =
+  const filteredJobs =
     statusFilter === "ALL"
-      ? leads
-      : leads.filter((lead) => lead.status === statusFilter);
+      ? jobs
+      : jobs.filter((job) => job.status === statusFilter);
 
   return (
     <div className="w-full rounded-md border border-slate-200 dark:border-slate-800">
       <div className="flex items-center justify-between p-4">
-        <Button asChild>
-          <Link href="/leads/new">+ New Lead</Link>
-        </Button>
-
         <div className="flex gap-2">
           <Button
             variant={statusFilter === "ALL" ? "default" : "outline"}
@@ -48,24 +44,24 @@ export function LeadsTable({ leads }: LeadsTableProps) {
           </Button>
 
           <Button
-            variant={statusFilter === "LEAD" ? "default" : "outline"}
-            onClick={() => setStatusFilter("LEAD")}
+            variant={statusFilter === "BOOKED" ? "default" : "outline"}
+            onClick={() => setStatusFilter("BOOKED")}
           >
-            Leads
+            Booked
           </Button>
 
           <Button
-            variant={statusFilter === "QUOTED" ? "default" : "outline"}
-            onClick={() => setStatusFilter("QUOTED")}
+            variant={statusFilter === "IN_PROGRESS" ? "default" : "outline"}
+            onClick={() => setStatusFilter("IN_PROGRESS")}
           >
-            Quoted
+            In Progress
           </Button>
 
           <Button
-            variant={statusFilter === "LOST" ? "default" : "outline"}
-            onClick={() => setStatusFilter("LOST")}
+            variant={statusFilter === "COMPLETED" ? "default" : "outline"}
+            onClick={() => setStatusFilter("COMPLETED")}
           >
-            Lost
+            Completed
           </Button>
         </div>
       </div>
@@ -83,7 +79,7 @@ export function LeadsTable({ leads }: LeadsTableProps) {
         </TableHeader>
 
         <TableBody>
-          {filteredLeads.length === 0 ? (
+          {filteredJobs.length === 0 ? (
             <TableRow>
               <TableCell
                 colSpan={6}
@@ -93,38 +89,38 @@ export function LeadsTable({ leads }: LeadsTableProps) {
               </TableCell>
             </TableRow>
           ) : (
-            filteredLeads.map((lead) => (
+            filteredJobs.map((job) => (
               <TableRow
-                key={lead.id}
+                key={job.id}
                 className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50"
               >
-                <TableCell className="font-medium">{lead.job_number}</TableCell>
+                <TableCell className="font-medium">{job.job_number}</TableCell>
 
                 <TableCell>
-                  {lead.vehicles.customers.first_name}{" "}
-                  {lead.vehicles.customers.last_name}
+                  {job.vehicles.customers.first_name}{" "}
+                  {job.vehicles.customers.last_name}
                 </TableCell>
 
                 <TableCell>
-                  {lead.vehicles.make} {lead.vehicles.model}
+                  {job.vehicles.make} {job.vehicles.model}
                   <div className="text-xs text-slate-500">
-                    {formatRegistration(lead.vehicles.registration)}
+                    {formatRegistration(job.vehicles.registration)}
                   </div>
                 </TableCell>
 
                 <TableCell>
-                  <StatusBadge status={lead.status} />
+                  <StatusBadge status={job.status} />
                 </TableCell>
 
                 <TableCell>
                   <span suppressHydrationWarning>
-                    {formatRelativeDate(lead.created_at)}
+                    {formatRelativeDate(job.created_at)}
                   </span>
                 </TableCell>
 
                 <TableCell className="text-right">
                   <Button asChild size="sm">
-                    <Link href={`/leads/${lead.id}`}>View</Link>
+                    <Link href={`/jobs/${job.id}`}>View</Link>
                   </Button>
                 </TableCell>
               </TableRow>

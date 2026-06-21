@@ -5,8 +5,23 @@ import { QuoteLeadDto } from "../../types/lead.types";
 const getJobs = async () => {
   const { data, error } = await supabase
     .from("jobs")
-    .select("*")
-    .is("deleted_at", null);
+    .select(
+      `
+      *,
+      vehicles (
+        registration,
+        make,
+        model,
+        customers (
+          first_name,
+          last_name
+        )
+      )
+    `,
+    )
+    .is("deleted_at", null)
+    .in("status", ["BOOKED", "IN_PROGRESS", "COMPLETED"])
+    .order("created_at", { ascending: false });
 
   if (error) {
     throw new Error(error.message);
@@ -18,7 +33,19 @@ const getJobs = async () => {
 const getJobById = async (id: string) => {
   const { data, error } = await supabase
     .from("jobs")
-    .select("*")
+    .select(
+      `*, vehicles (
+          registration,
+          make,
+          model,
+          customers (
+            first_name,
+            last_name,
+            email,
+            phone
+          )
+        )`,
+    )
     .eq("id", id)
     .single();
 
@@ -185,6 +212,38 @@ const deleteJobById = async (id: string) => {
   return data;
 };
 
+const startJob = async (id: string) => {
+  const { data, error } = await supabase
+    .from("jobs")
+    .update({
+      status: "IN_PROGRESS",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data;
+};
+
+const completeJob = async (id: string) => {
+  const { data, error } = await supabase
+    .from("jobs")
+    .update({
+      status: "COMPLETED",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data;
+};
+
 module.exports = {
   getJobs,
   getJobById,
@@ -196,4 +255,6 @@ module.exports = {
   updateJobById,
   deleteJobById,
   markLeadAsLost,
+  startJob,
+  completeJob,
 };

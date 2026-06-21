@@ -25,6 +25,7 @@ import {
   ReceiptIcon,
   CommandIcon,
   PoundSterlingIcon,
+  PersonStandingIcon,
 } from "lucide-react";
 
 import Link from "next/link";
@@ -65,6 +66,11 @@ const data = {
       title: "Quotes",
       url: "/quotes",
       icon: <PoundSterlingIcon />,
+    },
+    {
+      title: "Staff",
+      url: "/staff",
+      icon: <PersonStandingIcon />,
     },
   ],
 

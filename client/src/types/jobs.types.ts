@@ -12,3 +12,28 @@ export interface UpdateJobDto {
   estimated_cost?: number;
   actual_cost?: number;
 }
+
+export interface JobSummaryDto {
+  id: string;
+  job_number: string;
+  status: string;
+  created_at: string;
+  quoted_cost: string;
+  actual_cost: string;
+  description: string;
+  job_type: string;
+  updated_at: string;
+
+  vehicles: {
+    registration: string;
+    make: string;
+    model: string;
+
+    customers: {
+      first_name: string;
+      last_name: string;
+      phone: string;
+      email: string;
+    };
+  };
+}
