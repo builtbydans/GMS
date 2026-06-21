@@ -48,15 +48,15 @@ const markLeadAsLost = async (
   }
 };
 
-const bookLead = async (req: Request, res: Response, next: NextFunction) => {
+const acceptQuote = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
 
-    const bookLead = await leadService.bookLead(id);
+    const acceptQuote = await leadService.acceptQuote(id);
 
     return res.status(200).json({
       success: true,
-      data: bookLead,
+      data: acceptQuote,
     });
   } catch (error) {
     next(error);
@@ -98,5 +98,5 @@ module.exports = {
   getLeadById,
   quoteLead,
   markLeadAsLost,
-  bookLead,
+  acceptQuote,
 };

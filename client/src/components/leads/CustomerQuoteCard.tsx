@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { bookLead, markLeadAsLost } from "@/services/lead.service";
+import {
+  acceptQuote,
+  markLeadAsLost,
+  confirmDeposit,
+} from "@/services/lead.service";
 import { formatRegistration } from "@/utils/formatRegistration";
 import { LeadSummaryDto } from "@/types/lead.types";
 
@@ -13,9 +17,10 @@ interface CustomerQuoteCardProps {
 const CustomerQuoteCard = ({ job }: CustomerQuoteCardProps) => {
   const [accept, setAccept] = useState(false);
   const [reject, setReject] = useState(false);
+  const [depositPaid, setDepositPaid] = useState(job.status === "BOOKED");
 
   const handleAccept = async () => {
-    await bookLead(job.id);
+    await acceptQuote(job.id);
     setAccept(true);
   };
 
@@ -24,9 +29,16 @@ const CustomerQuoteCard = ({ job }: CustomerQuoteCardProps) => {
     setReject(true);
   };
 
+  const handleDepositPayment = async () => {
+    await confirmDeposit(job.id);
+    setDepositPaid(true);
+  };
+
+  const depositAmount = ((job.quoted_cost ?? 0) * 0.1).toFixed(2);
+
   return (
     <div>
-      {" "}
+      <h1>CUSTOMER QUOTE PAGE</h1>
       <div className="mt-6 rounded-lg border p-6">
         <h1 className="text-3xl font-bold">
           New Quote for {formatRegistration(job.vehicles.registration)}
@@ -52,11 +64,47 @@ const CustomerQuoteCard = ({ job }: CustomerQuoteCardProps) => {
             </div>
           )}
         </div>
-        {accept && (
-          <div>
-            <p>
-              Thank you for accepting your quote. Please drop your vehicle on
-              23rd June 2026 by 8AM
+        {accept && !depositPaid && (
+          <div className="mt-6 rounded-lg border p-6">
+            <h2 className="text-xl font-bold">Quote Accepted</h2>
+
+            <p className="mt-2">
+              To secure your booking we require a 10% deposit.
+            </p>
+
+            <p className="mt-4 text-3xl font-bold">£{depositAmount}</p>
+
+            <p className="mt-2 text-sm text-slate-500">
+              This deposit will be deducted from your final invoice.
+            </p>
+
+            <Button className="mt-4" onClick={handleDepositPayment}>
+              Mock Pay Deposit
+            </Button>
+          </div>
+        )}
+        {depositPaid && (
+          <div className="mt-6 rounded-lg border border-green-200 bg-green-50 p-6">
+            <h2 className="text-xl font-bold text-green-700">
+              Booking Confirmed
+            </h2>
+
+            <p className="mt-3 text-black">
+              Thank you for your deposit payment.
+            </p>
+
+            <p className="mt-2 text-black">
+              Your booking has now been confirmed and your vehicle has been
+              added to our workshop queue.
+            </p>
+
+            <p className="mt-2 text-black">
+              A member of our team will contact you shortly to arrange a
+              suitable drop-off date and time.
+            </p>
+
+            <p className="mt-4 text-sm text-slate-600">
+              Deposit paid: £{depositAmount}
             </p>
           </div>
         )}

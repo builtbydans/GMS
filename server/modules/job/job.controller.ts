@@ -74,6 +74,25 @@ const deleteJob = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const confirmDeposit = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const id = req.params.id;
+
+    const depositPaid = await jobService.confirmDeposit(id);
+
+    return res.status(200).json({
+      success: true,
+      data: depositPaid,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const startJob = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
@@ -110,6 +129,7 @@ module.exports = {
   createJob,
   updateJob,
   deleteJob,
+  confirmDeposit,
   startJob,
   completeJob,
 };

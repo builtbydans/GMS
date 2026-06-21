@@ -15,7 +15,6 @@ interface JobDetailsProps {
 }
 
 const JobDetailsCard = ({ job }: JobDetailsProps) => {
-  console.log(job);
   return (
     <div className="mx-auto max-w-5xl p-5">
       <div className="mb-6 flex items-center justify-between">

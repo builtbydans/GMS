@@ -68,18 +68,38 @@ const markLeadAsLost = async (id: string) => {
   return await jobRepository.markLeadAsLost(id);
 };
 
-const bookLead = async (id: string) => {
+const acceptQuote = async (id: string) => {
   const lead = await jobRepository.getLeadById(id);
 
   if (!lead) {
     throw new AppError("Lead not found", 404);
   }
 
-  if (lead.status === "BOOKED") {
-    throw new AppError("This job has already been booked", 400);
+  if (lead.status !== "QUOTED") {
+    throw new AppError(
+      `Only quoted jobs can be accepted. Current status: ${lead.status}`,
+      400,
+    );
   }
 
-  return await jobRepository.bookLead(id);
+  return await jobRepository.acceptQuote(id);
+};
+
+const confirmDeposit = async (id: string) => {
+  const job = await jobRepository.getJobById(id);
+
+  if (!job) {
+    throw new AppError("Job not found", 404);
+  }
+
+  if (job.status !== "AWAITING_DEPOSIT") {
+    throw new AppError(
+      `Only jobs awaiting deposit can be booked. Current status: ${job.status}`,
+      400,
+    );
+  }
+
+  return await jobRepository.confirmDeposit(id);
 };
 
 const createJob = async (jobData: CreateJobDto) => {
@@ -212,7 +232,8 @@ module.exports = {
   getLeads,
   getLeadById,
   quoteLead,
-  bookLead,
+  acceptQuote,
+  confirmDeposit,
   createJob,
   updateJobById,
   deleteJobById,

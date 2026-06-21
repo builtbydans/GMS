@@ -20,7 +20,7 @@ const getJobs = async () => {
     `,
     )
     .is("deleted_at", null)
-    .in("status", ["BOOKED", "IN_PROGRESS", "COMPLETED"])
+    .in("status", ["AWAITING_DEPOSIT", "BOOKED", "IN_PROGRESS", "COMPLETED"])
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -150,7 +150,23 @@ const markLeadAsLost = async (id: string) => {
   return data;
 };
 
-const bookLead = async (id: string) => {
+const acceptQuote = async (id: string) => {
+  const { data, error } = await supabase
+    .from("jobs")
+    .update({
+      status: "AWAITING_DEPOSIT",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data;
+};
+
+const confirmDeposit = async (id: string) => {
   const { data, error } = await supabase
     .from("jobs")
     .update({
@@ -249,8 +265,9 @@ module.exports = {
   getJobById,
   getLeads,
   getLeadById,
+  confirmDeposit,
   quoteLead,
-  bookLead,
+  acceptQuote,
   createJob,
   updateJobById,
   deleteJobById,

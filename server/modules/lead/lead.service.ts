@@ -20,8 +20,8 @@ const markLeadAsLost = async (id: string) => {
   return await jobService.markLeadAsLost(id);
 };
 
-const bookLead = async (id: string) => {
-  return await jobService.bookLead(id);
+const acceptQuote = async (id: string) => {
+  return await jobService.acceptQuote(id);
 };
 
 const createLead = async (leadData: CreateLeadDto) => {
@@ -101,5 +101,5 @@ module.exports = {
   getLeadById,
   quoteLead,
   markLeadAsLost,
-  bookLead,
+  acceptQuote,
 };

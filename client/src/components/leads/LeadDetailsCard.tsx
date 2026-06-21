@@ -23,6 +23,7 @@ export const LeadDetailsCard = ({ lead }: LeadDetailsCardProps) => {
           <MarkLeadLostButton leadId={lead.id} />
         )}
         <h1 className="text-2xl font-bold">{lead.job_number}</h1>
+        <p>REMOVE THIS - FOR TESTING ONLY - {lead.id}</p>
 
         <p className="text-sm text-muted-foreground">
           Created {new Date(lead.created_at).toLocaleDateString("en-GB")}

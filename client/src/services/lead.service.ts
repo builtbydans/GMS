@@ -85,8 +85,8 @@ export const markLeadAsLost = async (id: string) => {
   return response.json();
 };
 
-export const bookLead = async (id: string) => {
-  const response = await fetch(`${API_URL}/leads/${id}/book`, {
+export const acceptQuote = async (id: string) => {
+  const response = await fetch(`${API_URL}/leads/${id}/accept`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -94,8 +94,29 @@ export const bookLead = async (id: string) => {
   });
 
   if (!response.ok) {
-    throw new Error("Fail to book lead, please check status");
+    const error = await response.json();
+
+    console.log(error);
+
+    throw new Error(error.message);
   }
 
   return response.json();
+};
+
+export const confirmDeposit = async (id: string) => {
+  const response = await fetch(`${API_URL}/jobs/${id}/confirm-deposit`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to confirm deposit");
+  }
+
+  const result = await response.json();
+
+  return result.data;
 };

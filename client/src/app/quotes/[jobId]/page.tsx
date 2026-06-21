@@ -18,7 +18,7 @@ const JobQuotesPage = async ({ params }: Props) => {
   }
 
   if (job.status === "BOOKED") {
-    return <div>Error: this job has already been booked</div>;
+    return <CustomerQuoteCard job={job} />;
   }
 
   return (
