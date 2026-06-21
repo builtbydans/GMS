@@ -47,7 +47,8 @@ const getLeads = async () => {
       `,
     )
     .is("deleted_at", null)
-    .eq("status", "LEAD");
+    .in("status", ["LEAD", "LOST", "QUOTED"])
+    .order("created_at", { ascending: false });
 
   if (error) {
     throw new Error(error.message);

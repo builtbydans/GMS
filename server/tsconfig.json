@@ -13,6 +13,6 @@
 
     "types": ["node"]
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "../client/src/utils/date.ts"],
   "exclude": ["node_modules"]
 }

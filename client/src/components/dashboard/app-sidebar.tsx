@@ -24,6 +24,7 @@ import {
   ClipboardListIcon,
   ReceiptIcon,
   CommandIcon,
+  PoundSterlingIcon,
 } from "lucide-react";
 
 import Link from "next/link";
@@ -59,6 +60,11 @@ const data = {
       title: "Invoices",
       url: "/invoices",
       icon: <ReceiptIcon />,
+    },
+    {
+      title: "Quotes",
+      url: "/quotes",
+      icon: <PoundSterlingIcon />,
     },
   ],
 

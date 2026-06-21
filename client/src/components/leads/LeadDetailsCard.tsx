@@ -2,6 +2,8 @@ import { LeadSummaryDto } from "@/types/lead.types";
 import { QuoteLeadForm } from "./QuoteLeadForm";
 import StatusBadge from "./StatusBadge";
 import { Button } from "../ui/button";
+import { formatRegistration } from "@/utils/formatRegistration";
+
 import MarkLeadLostButton from "./MarkLeadLostButton";
 import Link from "next/link";
 
@@ -48,7 +50,7 @@ export const LeadDetailsCard = ({ lead }: LeadDetailsCardProps) => {
             {lead.vehicles.make} {lead.vehicles.model}
           </div>
 
-          <div>{lead.vehicles.registration}</div>
+          <div>{formatRegistration(lead.vehicles.registration)}</div>
         </div>
       </div>
 

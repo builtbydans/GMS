@@ -4,7 +4,7 @@ import { LeadsTable } from "@/components/leads/LeadsTable";
 const LeadsPage = async () => {
   const leads = await getLeads();
   return (
-    <div>
+    <div className="p-5">
       <LeadsTable leads={leads} />
     </div>
   );

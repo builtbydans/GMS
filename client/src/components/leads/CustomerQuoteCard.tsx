@@ -3,9 +3,14 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { bookLead, markLeadAsLost } from "@/services/lead.service";
-import { useRouter } from "next/navigation";
+import { formatRegistration } from "@/utils/formatRegistration";
+import { LeadSummaryDto } from "@/types/lead.types";
 
-const CustomerQuoteCard = ({ job }) => {
+interface CustomerQuoteCardProps {
+  job: LeadSummaryDto;
+}
+
+const CustomerQuoteCard = ({ job }: CustomerQuoteCardProps) => {
   const [accept, setAccept] = useState(false);
   const [reject, setReject] = useState(false);
 
@@ -24,7 +29,7 @@ const CustomerQuoteCard = ({ job }) => {
       {" "}
       <div className="mt-6 rounded-lg border p-6">
         <h1 className="text-3xl font-bold">
-          New Quote for {job.vehicles.registration}
+          New Quote for {formatRegistration(job.vehicles.registration)}
         </h1>
 
         <div className="mt-4 space-y-2">
