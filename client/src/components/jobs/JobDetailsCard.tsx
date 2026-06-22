@@ -81,13 +81,14 @@ const JobDetailsCard = ({ job }: JobDetailsProps) => {
             </p>
 
             <p>
-              <strong>Quoted Cost:</strong> £{job.quoted_cost?.toFixed(2)}
+              <strong>Quoted Cost:</strong> £
+              {Number(job.quoted_cost).toFixed(2)}
             </p>
 
             <p>
               <strong>Actual Cost:</strong>{" "}
               {job.actual_cost
-                ? `£${job.actual_cost.toFixed(2)}`
+                ? `£${Number(job.actual_cost).toFixed(2)}`
                 : "Not yet recorded"}
             </p>
           </CardContent>
