@@ -48,3 +48,18 @@ export const startJob = async (id: string) => {
 
   return response.json();
 };
+
+export const completeJob = async (id: string) => {
+  const response = await fetch(`${API_URL}/jobs/${id}/complete`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to complete job");
+  }
+
+  return response.json();
+};

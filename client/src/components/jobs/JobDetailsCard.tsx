@@ -9,6 +9,7 @@ import { formatRegistration } from "@/utils/formatRegistration";
 import { formatRelativeDate } from "@/utils/date";
 import StartJobButton from "./StartJobButton";
 import { JobSummaryDto } from "@/types/jobs.types";
+import CompleteJobButton from "./CompleteJobButton";
 
 interface JobDetailsProps {
   job: JobSummaryDto;
@@ -110,10 +111,20 @@ const JobDetailsCard = ({ job }: JobDetailsProps) => {
         {job.status === "BOOKED" && <StartJobButton jobId={job.id} />}
 
         {job.status === "IN_PROGRESS" && (
-          <Alert className="mt-5">
+          <Alert className="mt-5 border-green-200 bg-green-50 text-green-900">
             <AlertTitle>Work Started</AlertTitle>
-            <AlertDescription>
+            <AlertDescription className="text-green-700">
               This job was started {formatRelativeDate(job.updated_at)} by
+              Danish.
+            </AlertDescription>
+          </Alert>
+        )}
+        {job.status === "IN_PROGRESS" && <CompleteJobButton jobId={job.id} />}
+        {job.status === "COMPLETED" && (
+          <Alert className="mt-5 border-green-200 bg-green-50 text-green-900">
+            <AlertTitle>Work Completed</AlertTitle>
+            <AlertDescription className="text-green-700">
+              This job was completed {formatRelativeDate(job.updated_at)} by
               Danish.
             </AlertDescription>
           </Alert>
