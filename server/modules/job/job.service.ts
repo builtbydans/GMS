@@ -1,5 +1,6 @@
 const jobRepository = require("./job.repository");
 const auditRepository = require("../audit/audit.repository");
+const jobUpdateRepository = require("../job/updates/job-update.repository");
 const AppError = require("../../errors/AppError");
 import { CreateJobDto, UpdateJobDto } from "../../types/job.types";
 import { QuoteLeadDto } from "../../types/lead.types";
@@ -15,7 +16,9 @@ const getJobById = async (id: string) => {
     throw new AppError("Job not found", 404);
   }
 
-  return job;
+  const updates = await jobUpdateRepository.getJobUpdatesByJobId(id);
+
+  return { ...job, updates };
 };
 
 const getLeads = async () => {
@@ -179,6 +182,11 @@ const startJob = async (id: string) => {
     throw new AppError("Job not found", 404);
   }
 
+  await jobUpdateRepository.createJobUpdate({
+    job_id: id,
+    message: "Job Started",
+  });
+
   if (job.status !== "BOOKED") {
     throw new AppError(
       `Only BOOKED jobs can be started. Current status: ${job.status}`,
@@ -205,6 +213,11 @@ const completeJob = async (id: string) => {
   if (!job) {
     throw new AppError("Job not found", 404);
   }
+
+  await jobUpdateRepository.createJobUpdate({
+    job_id: id,
+    message: "Job Completed",
+  });
 
   if (job.status !== "IN_PROGRESS") {
     throw new AppError(

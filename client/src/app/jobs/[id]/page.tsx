@@ -9,6 +9,8 @@ const JobDetailsPage = async ({
   const { id } = await params;
   const job = await getJobById(id);
 
+  console.log(job);
+
   return (
     <>
       <JobDetailsCard job={job} />

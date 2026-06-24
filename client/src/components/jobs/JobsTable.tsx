@@ -9,7 +9,7 @@ import StatusBadge from "@/components/StatusBadge";
 import { formatRelativeDate } from "@/utils/date";
 import { formatRegistration } from "@/utils/formatRegistration";
 
-import { JobSummaryDto } from "@/types/jobs.types";
+import { JobSummaryDto } from "@/types/job.types";
 
 import {
   Table,

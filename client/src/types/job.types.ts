@@ -1,3 +1,5 @@
+import { JobUpdateDto } from "./job-update.types";
+
 export interface CreateJobDto {
   vehicle_id: string;
   job_type: string;
@@ -23,6 +25,7 @@ export interface JobSummaryDto {
   description: string;
   job_type: string;
   updated_at: string;
+  updates: JobUpdateDto[];
 
   vehicles: {
     registration: string;
