@@ -115,7 +115,7 @@ const JobDetailsCard = ({ job }: JobDetailsProps) => {
   };
 
   return (
-    <div className="grid gap-6 p-5 xl:grid-cols-[minmax(0,1fr)_22rem]">
+    <div className="grid gap-6 px-15 py-5 xl:grid-cols-[minmax(0)_22rem]">
       <main className="min-w-0 space-y-6">
         <Card className="overflow-hidden">
           <div className="border-b bg-muted/35 px-6 py-6">
@@ -164,7 +164,7 @@ const JobDetailsCard = ({ job }: JobDetailsProps) => {
 
                     return (
                       <div
-                        className="flex flex-1 items-start last:flex-none"
+                        className="mt-3 flex flex-1 items-start last:flex-none"
                         key={status}
                       >
                         <div className="flex w-24 flex-col items-center text-center">
