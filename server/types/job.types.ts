@@ -1,3 +1,5 @@
+import { JobStatus } from "../constants/job-status";
+
 export interface CreateJobDto {
   vehicle_id: string;
   job_type?: string;
@@ -8,7 +10,7 @@ export interface UpdateJobDto {
   vehicle_id?: string;
   job_type?: string;
   description?: string;
-  status?: string;
+  status?: JobStatus;
 
   quoted_cost?: number;
   deposit_amount?: number;

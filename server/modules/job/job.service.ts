@@ -4,6 +4,26 @@ const jobUpdateRepository = require("../job/updates/job-update.repository");
 const AppError = require("../../errors/AppError");
 import { CreateJobDto, UpdateJobDto } from "../../types/job.types";
 import { QuoteLeadDto } from "../../types/lead.types";
+import {
+  JOB_STATUS,
+  JOB_TRANSITIONS,
+  JobStatus,
+} from "../../constants/job-status";
+
+const validateStatusTransition = (
+  currentStatus: string,
+  nextStatus: JobStatus,
+) => {
+  const allowedTransitions =
+    JOB_TRANSITIONS[currentStatus as JobStatus] ?? [];
+
+  if (!allowedTransitions.includes(nextStatus)) {
+    throw new AppError(
+      `Invalid job status transition: ${currentStatus} -> ${nextStatus}`,
+      400,
+    );
+  }
+};
 
 const getJobs = async () => {
   return await jobRepository.getJobs();
@@ -36,9 +56,7 @@ const quoteLead = async (id: string, data: QuoteLeadDto) => {
     throw new AppError("Lead not found", 404);
   }
 
-  if (existingLead.status !== "LEAD") {
-    throw new AppError("Only leads can be converted to quotes", 400);
-  }
+  validateStatusTransition(existingLead.status, JOB_STATUS.QUOTED);
 
   if (!data.job_type?.trim()) {
     throw new AppError("Job type is required", 400);
@@ -58,15 +76,11 @@ const markLeadAsLost = async (id: string) => {
     throw new AppError("Lead not found", 404);
   }
 
-  if (lead.status === "LOST") {
+  if (lead.status === JOB_STATUS.LOST) {
     throw new AppError("Lead is already marked as lost", 400);
   }
 
-  const allowedStatuses = ["LEAD", "QUOTED"];
-
-  if (!allowedStatuses.includes(lead.status)) {
-    throw new AppError(`Cannot mark a ${lead.status} lead as lost`, 400);
-  }
+  validateStatusTransition(lead.status, JOB_STATUS.LOST);
 
   return await jobRepository.markLeadAsLost(id);
 };
@@ -78,12 +92,7 @@ const acceptQuote = async (id: string) => {
     throw new AppError("Lead not found", 404);
   }
 
-  if (lead.status !== "QUOTED") {
-    throw new AppError(
-      `Only quoted jobs can be accepted. Current status: ${lead.status}`,
-      400,
-    );
-  }
+  validateStatusTransition(lead.status, JOB_STATUS.AWAITING_DEPOSIT);
 
   return await jobRepository.acceptQuote(id);
 };
@@ -95,12 +104,7 @@ const confirmDeposit = async (id: string) => {
     throw new AppError("Job not found", 404);
   }
 
-  if (job.status !== "AWAITING_DEPOSIT") {
-    throw new AppError(
-      `Only jobs awaiting deposit can be booked. Current status: ${job.status}`,
-      400,
-    );
-  }
+  validateStatusTransition(job.status, JOB_STATUS.BOOKED);
 
   return await jobRepository.confirmDeposit(id);
 };
@@ -140,6 +144,10 @@ const updateJobById = async (id: string, updatedData: UpdateJobDto) => {
 
   if (!existingJob) {
     throw new AppError("Job not found", 404);
+  }
+
+  if (updatedData.status !== undefined) {
+    validateStatusTransition(existingJob.status, updatedData.status);
   }
 
   const updatedJob = await jobRepository.updateJobById(id, updatedData);
@@ -182,19 +190,14 @@ const startJob = async (id: string) => {
     throw new AppError("Job not found", 404);
   }
 
+  validateStatusTransition(job.status, JOB_STATUS.IN_PROGRESS);
+
+  const updatedJob = await jobRepository.startJob(id);
+
   await jobUpdateRepository.createJobUpdate({
     job_id: id,
     message: "Job Started",
   });
-
-  if (job.status !== "BOOKED") {
-    throw new AppError(
-      `Only BOOKED jobs can be started. Current status: ${job.status}`,
-      400,
-    );
-  }
-
-  const updatedJob = await jobRepository.startJob(id);
 
   await auditRepository.createAuditLog({
     entity_type: "job",
@@ -214,19 +217,14 @@ const completeJob = async (id: string) => {
     throw new AppError("Job not found", 404);
   }
 
+  validateStatusTransition(job.status, JOB_STATUS.COMPLETED);
+
+  const updatedJob = await jobRepository.completeJob(id);
+
   await jobUpdateRepository.createJobUpdate({
     job_id: id,
     message: "Job Completed",
   });
-
-  if (job.status !== "IN_PROGRESS") {
-    throw new AppError(
-      `Only IN_PROGRESS jobs can be completed. Current status: ${job.status}`,
-      400,
-    );
-  }
-
-  const updatedJob = await jobRepository.completeJob(id);
 
   await auditRepository.createAuditLog({
     entity_type: "job",

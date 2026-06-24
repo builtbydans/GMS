@@ -1,7 +1,7 @@
 import { DashboardStatsDto } from "../../types/dashboard.types";
+import { JOB_STATUS } from "../../constants/job-status";
 
 const supabase = require("../../config/db/supabase");
-const { DashboardStatsDto } = require("../../types/dashboard.types");
 
 const getDashboardStats = async (): Promise<DashboardStatsDto> => {
   const [
@@ -30,7 +30,7 @@ const getDashboardStats = async (): Promise<DashboardStatsDto> => {
     supabase
       .from("jobs")
       .select("*", { count: "exact", head: true })
-      .in("status", ["LEAD", "QUOTED"]),
+      .in("status", [JOB_STATUS.LEAD, JOB_STATUS.QUOTED]),
   ]);
 
   return {

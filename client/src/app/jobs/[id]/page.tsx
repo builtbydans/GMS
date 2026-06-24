@@ -1,5 +1,5 @@
 import JobDetailsCard from "@/components/jobs/JobDetailsCard";
-import { getJobById } from "@/services/job.service";
+import { getJobById } from "@/app/services/job.service";
 
 const JobDetailsPage = async ({
   params,
@@ -8,8 +8,6 @@ const JobDetailsPage = async ({
 }) => {
   const { id } = await params;
   const job = await getJobById(id);
-
-  console.log(job);
 
   return (
     <>

@@ -1,4 +1,5 @@
 import { JobUpdateDto } from "./job-update.types";
+import { JobStatus } from "@/constants/job-status";
 
 export interface CreateJobDto {
   vehicle_id: string;
@@ -10,7 +11,7 @@ export interface UpdateJobDto {
   vehicle_id?: string;
   job_type?: string;
   description?: string;
-  status?: string;
+  status?: JobStatus;
   estimated_cost?: number;
   actual_cost?: number;
 }
@@ -18,12 +19,12 @@ export interface UpdateJobDto {
 export interface JobSummaryDto {
   id: string;
   job_number: string;
-  status: string;
+  status: JobStatus;
   created_at: string;
-  quoted_cost: string;
-  actual_cost: string;
-  description: string;
-  job_type: string;
+  quoted_cost: string | number | null;
+  actual_cost: string | number | null;
+  description: string | null;
+  job_type: string | null;
   updated_at: string;
   updates: JobUpdateDto[];
 

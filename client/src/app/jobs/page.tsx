@@ -1,4 +1,4 @@
-import { getJobs } from "@/services/job.service";
+import { getJobs } from "@/app/services/job.service";
 import { JobsTable } from "@/components/jobs/JobsTable";
 
 const JobsPage = async () => {

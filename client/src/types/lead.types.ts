@@ -1,3 +1,5 @@
+import { JobStatus } from "@/constants/job-status";
+
 export interface CreateLeadDto {
   first_name: string;
   last_name: string;
@@ -15,7 +17,7 @@ export interface LeadSummaryDto {
   id: string;
   job_number: string;
   description: string;
-  status: string;
+  status: JobStatus;
   created_at: string;
   job_type: string | null;
   quoted_cost: number | null;

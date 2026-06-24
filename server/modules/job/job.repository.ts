@@ -2,6 +2,14 @@ const supabase = require("../../config/db/supabase");
 const AppError = require("../../errors/AppError");
 import { QuoteLeadDto } from "../../types/lead.types";
 
+import {
+  ACTIVE_JOB_STATUSES,
+  JOB_STATUS,
+  LEAD_STATUSES,
+} from "../../constants/job-status";
+
+import { CreateJobDto, UpdateJobDto } from "../../types/job.types";
+
 const getJobs = async () => {
   const { data, error } = await supabase
     .from("jobs")
@@ -20,7 +28,7 @@ const getJobs = async () => {
     `,
     )
     .is("deleted_at", null)
-    .in("status", ["AWAITING_DEPOSIT", "BOOKED", "IN_PROGRESS", "COMPLETED"])
+    .in("status", ACTIVE_JOB_STATUSES)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -74,7 +82,7 @@ const getLeads = async () => {
       `,
     )
     .is("deleted_at", null)
-    .in("status", ["LEAD", "LOST", "QUOTED"])
+    .in("status", LEAD_STATUSES)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -119,7 +127,7 @@ const quoteLead = async (id: string, data: QuoteLeadDto) => {
     .update({
       job_type: data.job_type,
       quoted_cost: data.quoted_cost,
-      status: "QUOTED",
+      status: JOB_STATUS.QUOTED,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)
@@ -138,7 +146,7 @@ const markLeadAsLost = async (id: string) => {
   const { data, error } = await supabase
     .from("jobs")
     .update({
-      status: "LOST",
+      status: JOB_STATUS.LOST,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)
@@ -154,7 +162,7 @@ const acceptQuote = async (id: string) => {
   const { data, error } = await supabase
     .from("jobs")
     .update({
-      status: "AWAITING_DEPOSIT",
+      status: JOB_STATUS.AWAITING_DEPOSIT,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)
@@ -170,7 +178,7 @@ const confirmDeposit = async (id: string) => {
   const { data, error } = await supabase
     .from("jobs")
     .update({
-      status: "BOOKED",
+      status: JOB_STATUS.BOOKED,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)
@@ -182,7 +190,7 @@ const confirmDeposit = async (id: string) => {
   return data;
 };
 
-const createJob = async (jobData: any) => {
+const createJob = async (jobData: CreateJobDto) => {
   const { data, error } = await supabase
     .from("jobs")
     .insert(jobData)
@@ -196,7 +204,7 @@ const createJob = async (jobData: any) => {
   return data;
 };
 
-const updateJobById = async (id: string, updatedData: any) => {
+const updateJobById = async (id: string, updatedData: UpdateJobDto) => {
   const { data, error } = await supabase
     .from("jobs")
     .update(updatedData)
@@ -232,7 +240,7 @@ const startJob = async (id: string) => {
   const { data, error } = await supabase
     .from("jobs")
     .update({
-      status: "IN_PROGRESS",
+      status: JOB_STATUS.IN_PROGRESS,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)
@@ -248,7 +256,7 @@ const completeJob = async (id: string) => {
   const { data, error } = await supabase
     .from("jobs")
     .update({
-      status: "COMPLETED",
+      status: JOB_STATUS.COMPLETED,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)
