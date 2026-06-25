@@ -13,9 +13,9 @@ const LeadPage = async ({ params }: LeadPageProps) => {
   const lead = await getLeadById(id);
 
   return (
-    <div className="space-y-6">
+    <main className="p-5">
       <LeadDetailsCard lead={lead} />
-    </div>
+    </main>
   );
 };
 

@@ -19,11 +19,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import {
-  completeJob,
-  startJob,
-  updateJobStatus,
-} from "@/app/services/job.service";
+import { completeJob, startJob, updateJobStatus } from "@/services/job.service";
 import StatusBadge from "@/components/StatusBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -161,6 +157,9 @@ const JobDetailsCard = ({ job }: JobDetailsProps) => {
                   {WORKSHOP_STATUS_SEQUENCE.map((status, index) => {
                     const isCurrent = status === job.status;
                     const isComplete = index < progressIndex;
+                    const isFinalCompleted =
+                      status === JOB_STATUS.COMPLETED &&
+                      job.status === JOB_STATUS.COMPLETED;
 
                     return (
                       <div
@@ -175,9 +174,11 @@ const JobDetailsCard = ({ job }: JobDetailsProps) => {
                                 "border-primary bg-primary text-primary-foreground",
                               isCurrent &&
                                 "border-primary ring-4 ring-primary/10 text-primary",
+                              isFinalCompleted &&
+                                "border-green-500 bg-green-100 text-green-700 ring-4 ring-green-500/20",
                             )}
                           >
-                            {isComplete ? (
+                            {isComplete || isFinalCompleted ? (
                               <Check className="size-4" />
                             ) : (
                               <span className="text-xs font-semibold">
@@ -263,7 +264,7 @@ const JobDetailsCard = ({ job }: JobDetailsProps) => {
                   Customer vehicle
                 </p>
               </div>
-              <div className="inline-flex rounded-md border bg-muted/40 px-3 py-1.5 font-mono text-sm font-semibold tracking-wider">
+              <div className="inline-flex rounded-md border bg-yellow-300 px-3 py-1.5 font-mono text-sm font-bold tracking-wider">
                 {formatRegistration(job.vehicles.registration)}
               </div>
             </CardContent>

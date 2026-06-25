@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowLeft, Mail, Phone, UserRound } from "lucide-react";
 
 import { getCustomerById } from "@/services/customer.service";
 import { getVehiclesByCustomerId } from "@/services/vehicle.service";
@@ -6,6 +7,12 @@ import { getVehiclesByCustomerId } from "@/services/vehicle.service";
 import { CustomerVehiclesSection } from "@/components/customers/CustomerVehiclesSection";
 
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 type Props = {
   params: Promise<{
@@ -22,32 +29,42 @@ const CustomerPage = async ({ params }: Props) => {
   ]);
 
   return (
-    <main className="max-w-4xl mx-auto p-8">
-      <Button asChild variant="outline">
-        <Link href="/customers">Back to Customers</Link>
+    <main className="space-y-6 p-5">
+      <Button asChild size="sm" variant="ghost">
+        <Link href="/customers">
+          <ArrowLeft data-icon="inline-start" />
+          Back to customers
+        </Link>
       </Button>
 
-      <div className="mt-6 rounded-lg border p-6">
-        <h1 className="text-3xl font-bold">
-          {customer.first_name} {customer.last_name}
-        </h1>
+      <Card className="max-w-4xl">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-xl">
+            <UserRound className="size-5 text-muted-foreground" />
+            {customer.first_name} {customer.last_name}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-3 text-sm sm:grid-cols-2">
+          <a
+            className="flex items-center gap-2 hover:underline"
+            href={`mailto:${customer.email}`}
+          >
+            <Mail className="size-4 text-muted-foreground" />
+            {customer.email}
+          </a>
+          <a
+            className="flex items-center gap-2 hover:underline"
+            href={`tel:${customer.phone}`}
+          >
+            <Phone className="size-4 text-muted-foreground" />
+            {customer.phone}
+          </a>
+        </CardContent>
+      </Card>
 
-        <div className="mt-4 space-y-2">
-          <p>
-            <strong>Email:</strong> {customer.email}
-          </p>
-
-          <p>
-            <strong>Phone:</strong> {customer.phone}
-          </p>
-        </div>
+      <div className="max-w-4xl">
+        <CustomerVehiclesSection customerId={id} vehicles={vehicles} />
       </div>
-
-      <section className="mt-8">
-        <div className="flex items-center justify-between">
-          <CustomerVehiclesSection customerId={id} vehicles={vehicles} />
-        </div>
-      </section>
     </main>
   );
 };

@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { ArrowRight, Wrench } from "lucide-react";
 
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/StatusBadge";
 
 import { formatRelativeDate } from "@/utils/date";
@@ -33,9 +34,9 @@ export function JobsTable({ jobs }: JobsTableProps) {
       : jobs.filter((job) => job.status === statusFilter);
 
   return (
-    <div className="w-full rounded-md border border-slate-200 dark:border-slate-800">
-      <div className="flex items-center justify-between p-4">
-        <div className="flex gap-2">
+    <div className="overflow-hidden rounded-xl border">
+      <div className="border-b p-4">
+        <div className="flex flex-wrap gap-2">
           <Button
             variant={statusFilter === "ALL" ? "default" : "outline"}
             onClick={() => setStatusFilter("ALL")}
@@ -68,7 +69,7 @@ export function JobsTable({ jobs }: JobsTableProps) {
 
       <Table>
         <TableHeader>
-          <TableRow className="bg-slate-50 dark:bg-gray-900">
+          <TableRow className="bg-muted/40">
             <TableHead>Job Number</TableHead>
             <TableHead>Customer</TableHead>
             <TableHead>Vehicle</TableHead>
@@ -81,20 +82,22 @@ export function JobsTable({ jobs }: JobsTableProps) {
         <TableBody>
           {filteredJobs.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={6}
-                className="h-24 text-center text-slate-500"
-              >
-                No leads found.
+              <TableCell className="h-32 text-center" colSpan={6}>
+                <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                  <Wrench className="size-8" />
+                  <p>No jobs found.</p>
+                </div>
               </TableCell>
             </TableRow>
           ) : (
             filteredJobs.map((job) => (
-              <TableRow
-                key={job.id}
-                className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50"
-              >
-                <TableCell className="font-medium">{job.job_number}</TableCell>
+              <TableRow key={job.id}>
+                <TableCell>
+                  <p className="font-medium">{job.job_number}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {job.job_type || "Workshop job"}
+                  </p>
+                </TableCell>
 
                 <TableCell>
                   {job.vehicles.customers.first_name}{" "}
@@ -103,7 +106,7 @@ export function JobsTable({ jobs }: JobsTableProps) {
 
                 <TableCell>
                   {job.vehicles.make} {job.vehicles.model}
-                  <div className="text-xs text-slate-500">
+                  <div className="text-xs text-muted-foreground">
                     {formatRegistration(job.vehicles.registration)}
                   </div>
                 </TableCell>
@@ -119,8 +122,11 @@ export function JobsTable({ jobs }: JobsTableProps) {
                 </TableCell>
 
                 <TableCell className="text-right">
-                  <Button asChild size="sm">
-                    <Link href={`/jobs/${job.id}`}>View</Link>
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={`/jobs/${job.id}`}>
+                      View
+                      <ArrowRight data-icon="inline-end" />
+                    </Link>
                   </Button>
                 </TableCell>
               </TableRow>

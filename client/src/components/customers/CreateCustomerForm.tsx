@@ -1,9 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { LoaderCircle } from "lucide-react";
+
 import { createCustomer } from "@/services/customer.service";
 import { CreateCustomerDto } from "@/types/customer.types";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export const CreateCustomerForm = () => {
   const [formData, setFormData] = useState<CreateCustomerDto>({
@@ -50,47 +61,76 @@ export const CreateCustomerForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
-      <input
-        name="first_name"
-        placeholder="First Name"
-        value={formData.first_name}
-        onChange={handleChange}
-        className="border p-2 w-full rounded"
-      />
+    <Card className="max-w-2xl">
+      <CardHeader>
+        <CardTitle>Customer details</CardTitle>
+        <CardDescription>
+          Enter the customer&apos;s contact information.
+        </CardDescription>
+      </CardHeader>
 
-      <input
-        name="last_name"
-        placeholder="Last Name"
-        value={formData.last_name}
-        onChange={handleChange}
-        className="border p-2 w-full rounded"
-      />
+      <CardContent>
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="first_name">First name</Label>
+              <Input
+                autoComplete="given-name"
+                id="first_name"
+                name="first_name"
+                onChange={handleChange}
+                required
+                value={formData.first_name}
+              />
+            </div>
 
-      <input
-        name="email"
-        placeholder="Email"
-        value={formData.email}
-        onChange={handleChange}
-        className="border p-2 w-full rounded"
-      />
+            <div className="space-y-2">
+              <Label htmlFor="last_name">Last name</Label>
+              <Input
+                autoComplete="family-name"
+                id="last_name"
+                name="last_name"
+                onChange={handleChange}
+                required
+                value={formData.last_name}
+              />
+            </div>
+          </div>
 
-      <input
-        name="phone"
-        placeholder="Phone"
-        value={formData.phone}
-        onChange={handleChange}
-        className="border p-2 w-full rounded"
-      />
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              autoComplete="email"
+              id="email"
+              name="email"
+              onChange={handleChange}
+              required
+              type="email"
+              value={formData.email}
+            />
+          </div>
 
-      <Button
-        variant="outline"
-        type="submit"
-        disabled={loading}
-        className="bg-black text-white px-4 py-2 rounded"
-      >
-        {loading ? "Creating..." : "Create Customer"}
-      </Button>
-    </form>
+          <div className="space-y-2">
+            <Label htmlFor="phone">Phone</Label>
+            <Input
+              autoComplete="tel"
+              id="phone"
+              name="phone"
+              onChange={handleChange}
+              required
+              type="tel"
+              value={formData.phone}
+            />
+          </div>
+
+          <div className="flex justify-end">
+            <Button disabled={loading} type="submit">
+              {loading && <LoaderCircle className="animate-spin" />}
+              {loading ? "Creating..." : "Create customer"}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 };

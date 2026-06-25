@@ -1,29 +1,31 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-import CreateLeadForm from "@/components/leads/CreateLeadForm";
+import { CreateCustomerForm } from "@/components/customers/CreateCustomerForm";
 import { Button } from "@/components/ui/button";
 
-const CreateLeadPage = () => {
+const CreateCustomerPage = () => {
   return (
     <main className="space-y-6 p-5">
       <Button asChild size="sm" variant="ghost">
-        <Link href="/leads">
+        <Link href="/customers">
           <ArrowLeft data-icon="inline-start" />
-          Back to leads
+          Back to customers
         </Link>
       </Button>
 
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Create lead</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Create customer
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Record a new customer enquiry and vehicle.
+          Add a new customer record to the garage.
         </p>
       </div>
 
-      <CreateLeadForm />
+      <CreateCustomerForm />
     </main>
   );
 };
 
-export default CreateLeadPage;
+export default CreateCustomerPage;

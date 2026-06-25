@@ -26,7 +26,10 @@ export async function SectionCards() {
                 {value}
               </CardTitle>
               <CardAction>
-                <Badge variant="outline">
+                <Badge
+                  variant="outline"
+                  className="bg-green-200 border-green-500 text-green-700"
+                >
                   <TrendingUpIcon />
                   +12.5%
                 </Badge>

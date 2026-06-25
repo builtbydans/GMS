@@ -1,13 +1,12 @@
 import Link from "next/link";
 import { Plus, UsersRound } from "lucide-react";
 
-import { getCustomers } from "@/services/customer.service";
-
-import { CustomerTable } from "@/components/customers/CustomerTable";
+import { getEmployees } from "@/services/employee.service";
+import EmployeesTable from "@/components/employees/EmployeesTable";
 import { Button } from "@/components/ui/button";
 
-const CustomersPage = async () => {
-  const customers = await getCustomers();
+const EmployeesPage = async () => {
+  const employees = await getEmployees();
 
   return (
     <main className="space-y-6 p-5">
@@ -15,23 +14,24 @@ const CustomersPage = async () => {
         <div>
           <div className="flex items-center gap-2">
             <UsersRound className="size-6" />
-            <h1 className="text-2xl font-semibold tracking-tight">Customers</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Employees</h1>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            Manage customer records and view their garage activity.
+            Manage workshop staff profiles, roles, and access.
           </p>
         </div>
 
         <Button asChild>
-          <Link href="/customers/new">
+          <Link href="/employees/new">
             <Plus data-icon="inline-start" />
-            New customer
+            Create employee
           </Link>
         </Button>
       </div>
-      <CustomerTable customers={customers} />
+
+      <EmployeesTable employees={employees} />
     </main>
   );
 };
 
-export default CustomersPage;
+export default EmployeesPage;

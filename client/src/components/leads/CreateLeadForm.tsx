@@ -1,9 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { LoaderCircle } from "lucide-react";
+
 import { createLead } from "@/services/lead.service";
 import { CreateLeadDto } from "@/types/lead.types";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -54,88 +65,122 @@ const CreateLeadForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
-      <input
-        type="text"
-        name="first_name"
-        placeholder="First Name"
-        value={formData.first_name}
-        onChange={handleChange}
-        className="border p-2 w-full rounded"
-      />
+    <Card className="max-w-2xl">
+      <CardHeader>
+        <CardTitle>Lead details</CardTitle>
+        <CardDescription>
+          Add the customer, vehicle, and enquiry information.
+        </CardDescription>
+      </CardHeader>
 
-      <input
-        type="text"
-        name="last_name"
-        placeholder="Last Name"
-        value={formData.last_name}
-        onChange={handleChange}
-        className="border p-2 w-full rounded"
-      />
+      <CardContent>
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="first_name">First name</Label>
+              <Input
+                id="first_name"
+                name="first_name"
+                onChange={handleChange}
+                required
+                value={formData.first_name}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="last_name">Last name</Label>
+              <Input
+                id="last_name"
+                name="last_name"
+                onChange={handleChange}
+                required
+                value={formData.last_name}
+              />
+            </div>
+          </div>
 
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        value={formData.email}
-        onChange={handleChange}
-        className="border p-2 w-full rounded"
-      />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                name="email"
+                onChange={handleChange}
+                required
+                type="email"
+                value={formData.email}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone</Label>
+              <Input
+                id="phone"
+                name="phone"
+                onChange={handleChange}
+                required
+                type="tel"
+                value={formData.phone}
+              />
+            </div>
+          </div>
 
-      <input
-        type="tel"
-        name="phone"
-        placeholder="Phone"
-        value={formData.phone}
-        onChange={handleChange}
-        className="border p-2 w-full rounded"
-      />
+          <div className="border-t pt-5">
+            <p className="mb-4 text-sm font-medium">Vehicle details</p>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="space-y-2">
+                <Label htmlFor="registration">Registration</Label>
+                <Input
+                  id="registration"
+                  name="registration"
+                  onChange={handleChange}
+                  required
+                  value={formData.registration}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="make">Make</Label>
+                <Input
+                  id="make"
+                  name="make"
+                  onChange={handleChange}
+                  required
+                  value={formData.make}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="model">Model</Label>
+                <Input
+                  id="model"
+                  name="model"
+                  onChange={handleChange}
+                  required
+                  value={formData.model}
+                />
+              </div>
+            </div>
+          </div>
 
-      <input
-        type="text"
-        name="registration"
-        placeholder="Vehicle Registration"
-        value={formData.registration}
-        onChange={handleChange}
-        className="border p-2 w-full rounded"
-      />
+          <div className="space-y-2">
+            <Label htmlFor="message">Enquiry</Label>
+            <textarea
+              className="min-h-28 w-full resize-none rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+              id="message"
+              name="message"
+              onChange={handleChange}
+              required
+              rows={4}
+              value={formData.message}
+            />
+          </div>
 
-      <input
-        type="text"
-        name="make"
-        placeholder="Vehicle Make"
-        value={formData.make}
-        onChange={handleChange}
-        className="border p-2 w-full rounded"
-      />
-
-      <input
-        type="text"
-        name="model"
-        placeholder="Vehicle Model"
-        value={formData.model}
-        onChange={handleChange}
-        className="border p-2 w-full rounded"
-      />
-
-      <textarea
-        name="message"
-        placeholder="Your Message"
-        value={formData.message}
-        onChange={handleChange}
-        rows={4}
-        className="border p-2 w-full rounded resize-none"
-      />
-
-      <Button
-        variant="outline"
-        type="submit"
-        disabled={loading}
-        className="bg-black text-white px-4 py-2 rounded"
-      >
-        {loading ? "Creating..." : "Send Enquiry"}
-      </Button>
-    </form>
+          <div className="flex justify-end">
+            <Button disabled={loading} type="submit">
+              {loading && <LoaderCircle className="animate-spin" />}
+              {loading ? "Creating..." : "Send enquiry"}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 

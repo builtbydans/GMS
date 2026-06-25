@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { Button } from "../ui/button";
+import { ArrowRight, UserRound } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 
 import {
   Table,
@@ -18,69 +20,51 @@ interface CustomerTableProps {
 
 export function CustomerTable({ customers }: CustomerTableProps) {
   return (
-    <div className="w-full rounded-md border border-slate-200 dark:border-slate-800">
+    <div className="overflow-hidden rounded-xl border">
       <Table>
         <TableHeader>
-          <TableRow className="bg-slate-50 dark:bg-slate-900">
-            <TableHead className="font-semibold text-slate-900 dark:text-slate-50">
-              First Name
-            </TableHead>
-            <TableHead className="font-semibold text-slate-900 dark:text-slate-50">
-              Last Name
-            </TableHead>
-            <TableHead className="font-semibold text-slate-900 dark:text-slate-50">
-              Email
-            </TableHead>
-            <TableHead className="font-semibold text-slate-900 dark:text-slate-50">
-              Phone Number
-            </TableHead>
-            <TableHead className="font-semibold text-slate-900 dark:text-slate-50">
-              View Customers
-            </TableHead>
-            <TableHead className="font-semibold text-slate-900 dark:text-slate-50">
-              Edit Customer
-            </TableHead>
+          <TableRow className="bg-muted/40">
+            <TableHead>Customer</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead>Phone</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {customers.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={4}
-                className="h-24 text-center text-slate-500"
-              >
-                No customers found.
+              <TableCell className="h-32 text-center" colSpan={4}>
+                <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                  <UserRound className="size-8" />
+                  <p>No customers found.</p>
+                </div>
               </TableCell>
             </TableRow>
           ) : (
-            customers.map((customer, index) => (
-              <TableRow
-                key={index}
-                className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50"
-              >
-                <TableCell className="font-medium">
-                  {customer.first_name}
+            customers.map((customer) => (
+              <TableRow key={customer.id}>
+                <TableCell>
+                  <p className="font-medium">
+                    {customer.first_name} {customer.last_name}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    ID: {customer.id}
+                  </p>
                 </TableCell>
-                <TableCell className="font-medium">
-                  {customer.last_name}
-                </TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400">
-                  {customer.email}
-                </TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400">
-                  {customer.phone}
-                </TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400">
-                  <Button asChild variant="outline">
-                    <Link href={`/customers/${customer.id}`}>View</Link>
-                  </Button>
-                </TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400">
-                  <Button asChild variant="outline">
-                    <Link href={`/customers/${customer.id}/edit`}>
-                      Edit Customer
-                    </Link>
-                  </Button>
+                <TableCell>{customer.email}</TableCell>
+                <TableCell>{customer.phone}</TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    <Button asChild size="sm" variant="ghost">
+                      <Link href={`/customers/${customer.id}/edit`}>Edit</Link>
+                    </Button>
+                    <Button asChild size="sm" variant="outline">
+                      <Link href={`/customers/${customer.id}`}>
+                        View
+                        <ArrowRight data-icon="inline-end" />
+                      </Link>
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))
