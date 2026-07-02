@@ -26,7 +26,9 @@ export const getCustomers = async () => {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch customers");
+    const body = await response.text();
+
+    throw new Error(`Failed to fetch customers: ${response.status}\n${body}`);
   }
 
   const result = await response.json();

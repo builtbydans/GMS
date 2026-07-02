@@ -1,6 +1,8 @@
 require("dotenv").config();
 const supabase = require("./config/db/supabase");
 
+const PORT = process.env.PORT || 3000;
+
 const express = require("express");
 const app = express();
 
@@ -68,6 +70,6 @@ app.get("/", (req: any, res: any) => {
   res.send("Server API is running");
 });
 
-app.listen(3000, () => {
-  console.log("server is running on port 3000");
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
