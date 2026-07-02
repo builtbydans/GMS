@@ -9,7 +9,7 @@ export const getDashboardStats = async () => {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch customers");
+    throw new Error("Failed to fetch data, please review");
   }
 
   const result = await response.json();
