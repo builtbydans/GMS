@@ -3,7 +3,7 @@ import {
   UpdateInvoiceData,
 } from "../../types/invoice.types";
 
-const supabase = require("../../config/db/supabase");
+import supabase from "../../config/db/supabase";
 
 const getInvoices = async () => {
   const { data, error } = await supabase

@@ -1,4 +1,4 @@
-const supabase = require("../../config/db/supabase");
+import supabase from "../../config/db/supabase";
 const AppError = require("../../errors/AppError");
 
 const createAuditLog = async (auditData: any) => {

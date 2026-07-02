@@ -1,7 +1,7 @@
 import { DashboardStatsDto } from "../../types/dashboard.types";
 import { JOB_STATUS } from "../../constants/job-status";
 
-const supabase = require("../../config/db/supabase");
+import supabase from "../../config/db/supabase";
 
 const getDashboardStats = async (): Promise<DashboardStatsDto> => {
   const [

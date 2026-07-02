@@ -1,4 +1,4 @@
-const supabase = require("../../config/db/supabase");
+import supabase from "../../config/db/supabase";
 const AppError = require("../../errors/AppError");
 import {
   CreateEmployeeRecordDto,
@@ -53,10 +53,7 @@ const createEmployee = async (employeeData: CreateEmployeeRecordDto) => {
   return data;
 };
 
-const updateEmployeePin = async (
-  id: string,
-  pinData: UpdateEmployeePinDto,
-) => {
+const updateEmployeePin = async (id: string, pinData: UpdateEmployeePinDto) => {
   const { data, error } = await supabase
     .from("employees")
     .update({
