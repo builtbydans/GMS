@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { WorkInProgressBanner } from "@/components/work-in-progress-banner";
 
 import { ThemeProvider } from "@/components/theme-provider";
 
@@ -51,6 +52,7 @@ export default function RootLayout({
               <AppSidebar />
 
               <SidebarInset>
+                <WorkInProgressBanner />
                 <SiteHeader />
                 {children}
               </SidebarInset>
