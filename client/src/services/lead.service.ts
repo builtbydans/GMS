@@ -3,8 +3,7 @@ import {
   LeadSummaryDto,
   QuoteLeadDto,
 } from "@/types/lead.types";
-
-const API_URL = "http://localhost:3000";
+import { API_URL } from "@/config/api";
 
 export const createLead = async (leadData: CreateLeadDto) => {
   const response = await fetch(`${API_URL}/leads`, {

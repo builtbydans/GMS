@@ -1,6 +1,5 @@
 import { VehicleData, CreateVehicleDto } from "@/types/vehicle.types";
-
-const API_URL = "http://localhost:3000";
+import { API_URL } from "@/config/api";
 
 export const createVehicle = async (vehicleData: CreateVehicleDto) => {
   const response = await fetch(`${API_URL}/vehicles`, {
