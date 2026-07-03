@@ -479,7 +479,7 @@ https://github.com/builtbydans
 
 LinkedIn
 
-(Add LinkedIn)
+https://www.linkedin.com/in/danishshafi/
 
 ---
 
