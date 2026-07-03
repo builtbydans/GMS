@@ -1,6 +1,6 @@
-import { JobStatus } from "../constants/job-status";
+import { JobStatus } from "@/constants/job-status";
 
-export interface DashboardStatsDto {
+export interface WorkshopDashboardDto {
   customers: number;
   vehicles: number;
   jobs: number;

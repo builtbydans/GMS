@@ -1,4 +1,4 @@
-const supabase = require("../../../config/db/supabase");
+import supabase from "../../../config/db/supabase";
 const AppError = require("../../../errors/AppError");
 import { CreateJobUpdateDto } from "../../../types/job-update.types";
 

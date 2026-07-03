@@ -264,7 +264,7 @@ const JobDetailsCard = ({ job }: JobDetailsProps) => {
                   Customer vehicle
                 </p>
               </div>
-              <div className="inline-flex rounded-md border bg-yellow-300 px-3 py-1.5 font-mono text-sm font-bold tracking-wider">
+              <div className="inline-flex rounded-md border bg-yellow-300 dark:text-black px-3 py-1.5 font-mono text-sm font-bold tracking-wider">
                 {formatRegistration(job.vehicles.registration)}
               </div>
             </CardContent>

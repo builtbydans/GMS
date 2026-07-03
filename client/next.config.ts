@@ -1,10 +1,6 @@
 import type { NextConfig } from "next";
-import path from "node:path";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    externalDir: true,
-  },
   images: {
     remotePatterns: [
       {
@@ -12,9 +8,6 @@ const nextConfig: NextConfig = {
         hostname: "png.pngtree.com",
       },
     ],
-  },
-  turbopack: {
-    root: path.join(process.cwd(), ".."),
   },
 };
 

@@ -1,11 +1,26 @@
-import { CreateVehicleForm } from "@/components/vehicles/CreateVehicleForm";
-import React from "react";
+import { CarFront } from "lucide-react";
 
-const VehiclesPage = () => {
+import { getVehicles } from "@/services/vehicle.service";
+
+import { VehicleTable } from "@/components/vehicles/VehicleTable";
+
+const VehiclesPage = async () => {
+  const vehicles = await getVehicles();
+
   return (
-    <>
-      <p>VehiclesPage</p>
-    </>
+    <main className="space-y-6 p-5">
+      <div>
+        <div className="flex items-center gap-2">
+          <CarFront className="size-6" />
+          <h1 className="text-2xl font-semibold tracking-tight">Vehicles</h1>
+        </div>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Manage registered vehicles and open their linked customer records.
+        </p>
+      </div>
+
+      <VehicleTable vehicles={vehicles} />
+    </main>
   );
 };
 

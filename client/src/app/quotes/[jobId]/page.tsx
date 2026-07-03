@@ -17,10 +17,6 @@ const JobQuotesPage = async ({ params }: Props) => {
     return <div>This job has not yet been quoted</div>;
   }
 
-  if (job.status === "BOOKED") {
-    return <CustomerQuoteCard job={job} />;
-  }
-
   return (
     <div>
       <CustomerQuoteCard job={job} />

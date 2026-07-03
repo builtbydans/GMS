@@ -23,7 +23,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GMS",
+  title: "Workshop",
   description: "Garage Management System",
 };
 

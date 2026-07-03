@@ -42,7 +42,7 @@ const CustomerQuoteCard = ({ job }: CustomerQuoteCardProps) => {
 
   return (
     <div>
-      <h1>CUSTOMER QUOTE PAGE</h1>
+      <h1>This is the Customer View</h1>
 
       <div className="mt-6 rounded-lg border p-6">
         <h1 className="text-3xl font-bold">

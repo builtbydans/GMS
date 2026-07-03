@@ -1,6 +1,6 @@
 const jobRepository = require("./job.repository");
 const auditRepository = require("../audit/audit.repository");
-const jobUpdateRepository = require("../job/updates/job-update.repository");
+const jobUpdateService = require("../job/updates/job-update.service");
 const AppError = require("../../errors/AppError");
 import { CreateJobDto, UpdateJobDto } from "../../types/job.types";
 import { QuoteLeadDto } from "../../types/lead.types";
@@ -14,8 +14,7 @@ const validateStatusTransition = (
   currentStatus: string,
   nextStatus: JobStatus,
 ) => {
-  const allowedTransitions =
-    JOB_TRANSITIONS[currentStatus as JobStatus] ?? [];
+  const allowedTransitions = JOB_TRANSITIONS[currentStatus as JobStatus] ?? [];
 
   if (!allowedTransitions.includes(nextStatus)) {
     throw new AppError(
@@ -36,7 +35,7 @@ const getJobById = async (id: string) => {
     throw new AppError("Job not found", 404);
   }
 
-  const updates = await jobUpdateRepository.getJobUpdatesByJobId(id);
+  const updates = await jobUpdateService.getJobUpdatesByJobId(id);
 
   return { ...job, updates };
 };
@@ -66,7 +65,10 @@ const quoteLead = async (id: string, data: QuoteLeadDto) => {
     throw new AppError("Quoted cost must be greater than 0", 400);
   }
 
-  return await jobRepository.quoteLead(id, data);
+  const updatedLead = await jobRepository.quoteLead(id, data);
+  await jobUpdateService.createWorkflowUpdate(id, JOB_STATUS.QUOTED);
+
+  return updatedLead;
 };
 
 const markLeadAsLost = async (id: string) => {
@@ -82,7 +84,10 @@ const markLeadAsLost = async (id: string) => {
 
   validateStatusTransition(lead.status, JOB_STATUS.LOST);
 
-  return await jobRepository.markLeadAsLost(id);
+  const updatedLead = await jobRepository.markLeadAsLost(id);
+  await jobUpdateService.createWorkflowUpdate(id, JOB_STATUS.LOST);
+
+  return updatedLead;
 };
 
 const acceptQuote = async (id: string) => {
@@ -94,7 +99,10 @@ const acceptQuote = async (id: string) => {
 
   validateStatusTransition(lead.status, JOB_STATUS.AWAITING_DEPOSIT);
 
-  return await jobRepository.acceptQuote(id);
+  const updatedLead = await jobRepository.acceptQuote(id);
+  await jobUpdateService.createWorkflowUpdate(id, JOB_STATUS.AWAITING_DEPOSIT);
+
+  return updatedLead;
 };
 
 const confirmDeposit = async (id: string) => {
@@ -106,7 +114,10 @@ const confirmDeposit = async (id: string) => {
 
   validateStatusTransition(job.status, JOB_STATUS.BOOKED);
 
-  return await jobRepository.confirmDeposit(id);
+  const updatedJob = await jobRepository.confirmDeposit(id);
+  await jobUpdateService.createWorkflowUpdate(id, JOB_STATUS.BOOKED);
+
+  return updatedJob;
 };
 
 const createJob = async (jobData: CreateJobDto) => {
@@ -148,6 +159,10 @@ const updateJobById = async (id: string, updatedData: UpdateJobDto) => {
 
   if (updatedData.status !== undefined) {
     validateStatusTransition(existingJob.status, updatedData.status);
+  }
+
+  if (updatedData.status) {
+    await jobUpdateService.createWorkflowUpdate(id, updatedData.status);
   }
 
   const updatedJob = await jobRepository.updateJobById(id, updatedData);
@@ -194,10 +209,7 @@ const startJob = async (id: string) => {
 
   const updatedJob = await jobRepository.startJob(id);
 
-  await jobUpdateRepository.createJobUpdate({
-    job_id: id,
-    message: "Job Started",
-  });
+  await jobUpdateService.createWorkflowUpdate(id, JOB_STATUS.IN_PROGRESS);
 
   await auditRepository.createAuditLog({
     entity_type: "job",
@@ -221,10 +233,7 @@ const completeJob = async (id: string) => {
 
   const updatedJob = await jobRepository.completeJob(id);
 
-  await jobUpdateRepository.createJobUpdate({
-    job_id: id,
-    message: "Job Completed",
-  });
+  await jobUpdateService.createWorkflowUpdate(id, JOB_STATUS.COMPLETED);
 
   await auditRepository.createAuditLog({
     entity_type: "job",

@@ -89,7 +89,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <Link href="/">
                 <CommandIcon className="size-5!" />
-                <span className="text-base font-semibold">GMS</span>
+                <span className="text-base font-semibold">Workshop</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
