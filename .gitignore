@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Framework and build output
+.next/
+**/.next/
+dist/
+**/dist/
+
+# Test coverage
+coverage/
+**/coverage/
+
+# Supabase local state
+supabase/.temp/
+**/supabase/.temp/

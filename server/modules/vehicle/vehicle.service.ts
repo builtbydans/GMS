@@ -47,13 +47,6 @@ const createVehicle = async (vehicleData: CreateVehicleDto) => {
     throw new AppError("Vehicle already registered", 400);
   }
 
-  console.log("SERVICE:", {
-    customer_id,
-    registration,
-    make,
-    model,
-  });
-
   const vehicle = await vehicleRepository.createVehicle({
     customer_id,
     registration,

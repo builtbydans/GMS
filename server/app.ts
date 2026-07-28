@@ -8,6 +8,7 @@ const app = express();
 
 const cors = require("cors");
 const path = require("path");
+const healthRoutes = require("./modules/health/health.routes");
 const customerRoutes = require("./modules/customer/customer.routes");
 const vehicleRoutes = require("./modules/vehicle/vehicle.routes");
 const jobRoutes = require("./modules/job/job.routes");
@@ -19,6 +20,7 @@ const employeeRoutes = require("./modules/employee/employee.routes");
 app.use(cors());
 app.use(express.json());
 
+app.use("/health", healthRoutes);
 app.use("/customers", customerRoutes);
 app.use("/vehicles", vehicleRoutes);
 app.use("/jobs", jobRoutes);
