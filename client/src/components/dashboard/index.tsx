@@ -97,9 +97,9 @@ const TodaysJobs = ({ jobs }: { jobs: DashboardJobDto[] }) => (
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/40">
-                <TableHead>Job Number</TableHead>
                 <TableHead>Customer</TableHead>
                 <TableHead>Vehicle Registration</TableHead>
+                <TableHead>Vehicle Make/Model</TableHead>
                 <TableHead>Job Type</TableHead>
                 <TableHead>Current Status</TableHead>
               </TableRow>
@@ -107,11 +107,6 @@ const TodaysJobs = ({ jobs }: { jobs: DashboardJobDto[] }) => (
             <TableBody>
               {jobs.map((job) => (
                 <TableRow key={job.id}>
-                  <TableCell className="font-medium">
-                    <Link className="hover:underline" href={`/jobs/${job.id}`}>
-                      {job.job_number}
-                    </Link>
-                  </TableCell>
                   <TableCell>
                     {job.vehicles.customers.first_name}{" "}
                     {job.vehicles.customers.last_name}
@@ -120,6 +115,9 @@ const TodaysJobs = ({ jobs }: { jobs: DashboardJobDto[] }) => (
                     <span className="inline-flex rounded-md border bg-yellow-300 dark:text-black px-3 py-1.5 font-mono text-sm font-bold tracking-wider">
                       {formatRegistration(job.vehicles.registration)}
                     </span>
+                  </TableCell>
+                  <TableCell>
+                    {job.vehicles.make} {job.vehicles.model}{" "}
                   </TableCell>
                   <TableCell>{job.job_type || "Workshop job"}</TableCell>
                   <TableCell>

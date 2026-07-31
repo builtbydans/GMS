@@ -16,6 +16,8 @@ const invoiceRoutes = require("./modules/invoice/invoice.routes");
 const dashboardRoutes = require("./modules/dashboard/dashboard.routes");
 const leadRoutes = require("./modules/lead/lead.routes");
 const employeeRoutes = require("./modules/employee/employee.routes");
+const { notFoundMiddleware } = require("./middleware/not-found.middleware");
+const { errorMiddleware } = require("./middleware/error.middleware");
 
 app.use(cors());
 app.use(express.json());
@@ -28,6 +30,9 @@ app.use("/invoices", invoiceRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/leads", leadRoutes);
 app.use("/employees", employeeRoutes);
+
+app.use(notFoundMiddleware);
+app.use(errorMiddleware);
 
 // app.get("/test-db", async (req: any, res: any) => {
 //   const { data, error } = await supabase.from("customers").select("*");
