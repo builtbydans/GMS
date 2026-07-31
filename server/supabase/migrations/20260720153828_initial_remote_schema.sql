@@ -12,7 +12,7 @@ create table public.customers (
 create table public.vehicles (
   id uuid primary key default gen_random_uuid(),
   customer_id uuid not null
-    references public.customers(id),
+    references public.customers(id)
     on delete restrict,
   registration text not null,
   make text not null,
