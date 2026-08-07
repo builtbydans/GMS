@@ -13,6 +13,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 import {
@@ -78,8 +79,28 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { open, setOpen, isMobile } = useSidebar();
+  const expandedByHoverRef = React.useRef(false);
+
+  const handleMouseEnter = React.useCallback(() => {
+    if (isMobile || open) return;
+    expandedByHoverRef.current = true;
+    setOpen(true);
+  }, [isMobile, open, setOpen]);
+
+  const handleMouseLeave = React.useCallback(() => {
+    if (isMobile || !expandedByHoverRef.current) return;
+    expandedByHoverRef.current = false;
+    setOpen(false);
+  }, [isMobile, setOpen]);
+
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar
+      collapsible="icon"
+      {...props}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
