@@ -4,12 +4,6 @@ import "./globals.css";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
-
-import { AppSidebar } from "@/components/dashboard/app-sidebar";
-import { SiteHeader } from "@/components/site-header";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { WorkInProgressBanner } from "@/components/work-in-progress-banner";
-
 import { ThemeProvider } from "@/components/theme-provider";
 
 const geistSans = Geist({
@@ -41,23 +35,7 @@ export default function RootLayout({
       <body className="min-h-full">
         <ThemeProvider>
           <TooltipProvider>
-            <SidebarProvider
-              style={
-                {
-                  "--sidebar-width": "calc(var(--spacing) * 72)",
-                  "--header-height": "calc(var(--spacing) * 12)",
-                } as React.CSSProperties
-              }
-            >
-              <AppSidebar />
-
-              <SidebarInset>
-                <WorkInProgressBanner />
-                <SiteHeader />
-                {children}
-              </SidebarInset>
-            </SidebarProvider>
-
+            {children}
             <Toaster />
           </TooltipProvider>
         </ThemeProvider>
