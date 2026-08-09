@@ -1,4 +1,3 @@
-require("dotenv").config();
 const supabase = require("./config/db/supabase");
 
 const PORT = process.env.PORT || 3001;
