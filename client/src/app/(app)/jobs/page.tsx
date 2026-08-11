@@ -7,7 +7,7 @@ const JobsPage = async () => {
   const jobs = await getJobs();
 
   return (
-    <main className="space-y-6 p-5">
+    <main className="space-y-6 py-6 px-12">
       <div>
         <div className="flex items-center gap-2">
           <Wrench className="size-6" />

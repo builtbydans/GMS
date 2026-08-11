@@ -5,6 +5,7 @@ import * as React from "react";
 import { NavDocuments } from "@/components/dashboard/nav-documents";
 import { NavMain } from "@/components/dashboard/nav-main";
 import { NavSecondary } from "@/components/dashboard/nav-secondary";
+import { NavUser } from "@/components/dashboard/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -29,6 +30,7 @@ import {
 } from "lucide-react";
 
 import Link from "next/link";
+import type { NavUserData } from "@/types/auth.types";
 
 const data = {
   navMain: [
@@ -78,9 +80,14 @@ const data = {
   documents: [],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
+  user: NavUserData | null;
+};
+
+export function AppSidebar({ user, ...props }: AppSidebarProps) {
   const { open, setOpen, isMobile } = useSidebar();
   const expandedByHoverRef = React.useRef(false);
+  const isUserMenuOpenRef = React.useRef(false);
 
   const handleMouseEnter = React.useCallback(() => {
     if (isMobile || open) return;
@@ -88,11 +95,52 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     setOpen(true);
   }, [isMobile, open, setOpen]);
 
-  const handleMouseLeave = React.useCallback(() => {
-    if (isMobile || !expandedByHoverRef.current) return;
-    expandedByHoverRef.current = false;
-    setOpen(false);
-  }, [isMobile, setOpen]);
+  const handleMouseLeave = React.useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      if (isMobile || !expandedByHoverRef.current || isUserMenuOpenRef.current) {
+        return;
+      }
+
+      // Dropdown content is portaled outside the sidebar — moving onto it
+      // must not count as leaving, or expand/collapse fights the menu.
+      const related = event.relatedTarget;
+      if (
+        related instanceof Element &&
+        related.closest('[data-slot="dropdown-menu-content"]')
+      ) {
+        return;
+      }
+
+      expandedByHoverRef.current = false;
+      setOpen(false);
+    },
+    [isMobile, setOpen],
+  );
+
+  const handleUserMenuOpenChange = React.useCallback(
+    (menuOpen: boolean) => {
+      isUserMenuOpenRef.current = menuOpen;
+
+      if (menuOpen) {
+        expandedByHoverRef.current = true;
+        setOpen(true);
+        return;
+      }
+
+      // Menu closed: collapse only if the pointer is no longer over the sidebar
+      requestAnimationFrame(() => {
+        const hovering = document
+          .querySelector('[data-slot="sidebar-container"]')
+          ?.matches(":hover");
+
+        if (!hovering && expandedByHoverRef.current) {
+          expandedByHoverRef.current = false;
+          setOpen(false);
+        }
+      });
+    },
+    [setOpen],
+  );
 
   return (
     <Sidebar
@@ -121,7 +169,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavDocuments items={data.documents} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
-      <SidebarFooter></SidebarFooter>
+      <SidebarFooter>
+        {user ? (
+          <NavUser user={user} onOpenChange={handleUserMenuOpenChange} />
+        ) : null}
+      </SidebarFooter>
     </Sidebar>
   );
 }

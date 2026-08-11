@@ -4,25 +4,22 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useEffect, useState } from "react";
 import { MoonIcon, SunIcon } from "lucide-react";
+import type { NavUserData } from "@/types/auth.types";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 
-export function SiteHeader() {
+export function SiteHeader({ user }: { user: NavUserData | null }) {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
 
   const getPageTitle = (path: string) => {
-    if (path === "/") return "Welcome back, Danish";
+    if (path === "/") return `Welcome back, ${user?.firstName}`;
 
     const firstSegment = path.match(/\/([^\/]+)/)?.[1];
 
     return firstSegment
       ? firstSegment.replace(/\b\w/g, (char) => char.toUpperCase())
       : "Dashboard";
-  };
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   return (
@@ -47,6 +44,7 @@ export function SiteHeader() {
             <MoonIcon className="absolute size-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           </button>
         </div>
+        <LogoutButton />
       </div>
     </header>
   );

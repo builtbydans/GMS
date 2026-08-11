@@ -48,9 +48,6 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
                   <p className="font-medium">
                     {vehicle.make} {vehicle.model}
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    ID: {vehicle.id}
-                  </p>
                 </TableCell>
                 <TableCell>
                   <span className="inline-flex rounded-md border bg-yellow-300 dark:text-black px-3 py-1.5 font-mono text-sm font-bold tracking-wider">

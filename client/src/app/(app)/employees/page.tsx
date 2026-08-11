@@ -9,7 +9,7 @@ const EmployeesPage = async () => {
   const employees = await getEmployees();
 
   return (
-    <main className="space-y-6 p-5">
+    <main className="space-y-6 py-6 px-12">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2">

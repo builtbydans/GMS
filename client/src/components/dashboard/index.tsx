@@ -219,7 +219,7 @@ const Dashboard = async () => {
   }
 
   return (
-    <main className="space-y-6 p-5">
+    <main className="space-y-6 py-6 px-12">
       <div>
         <div className="flex items-center gap-2">
           <ClipboardList className="size-6" />

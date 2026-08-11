@@ -2,12 +2,41 @@ import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { WorkInProgressBanner } from "@/components/work-in-progress-banner";
+import { createClient } from "@/lib/supabase/server";
+import type { NavUserData } from "@/types/auth.types";
 
-export default function AppLayout({
+export default async function AppLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let navUser: NavUserData | null = null;
+
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("first_name, last_name")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    const fullName = profile
+      ? `${profile.first_name} ${profile.last_name}`.trim()
+      : (user.email ?? "User");
+
+    navUser = {
+      firstName: profile?.first_name ?? fullName,
+      fullName,
+      email: user.email ?? "",
+      avatar: "",
+    };
+  }
+
   return (
     <SidebarProvider
       style={
@@ -17,11 +46,11 @@ export default function AppLayout({
         } as React.CSSProperties
       }
     >
-      <AppSidebar />
+      <AppSidebar user={navUser} />
 
       <SidebarInset>
         <WorkInProgressBanner />
-        <SiteHeader />
+        <SiteHeader user={navUser} />
         {children}
       </SidebarInset>
     </SidebarProvider>
