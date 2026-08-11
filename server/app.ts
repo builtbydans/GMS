@@ -17,18 +17,21 @@ const leadRoutes = require("./modules/lead/lead.routes");
 const employeeRoutes = require("./modules/employee/employee.routes");
 const { notFoundMiddleware } = require("./middleware/not-found.middleware");
 const { errorMiddleware } = require("./middleware/error.middleware");
+const {
+  authenticateMiddleware,
+} = require("./middleware/authenticate.middleware");
 
 app.use(cors());
 app.use(express.json());
 
 app.use("/health", healthRoutes);
-app.use("/customers", customerRoutes);
-app.use("/vehicles", vehicleRoutes);
-app.use("/jobs", jobRoutes);
-app.use("/invoices", invoiceRoutes);
-app.use("/dashboard", dashboardRoutes);
-app.use("/leads", leadRoutes);
-app.use("/employees", employeeRoutes);
+app.use("/customers", authenticateMiddleware, customerRoutes);
+app.use("/vehicles", authenticateMiddleware, vehicleRoutes);
+app.use("/jobs", authenticateMiddleware, jobRoutes);
+app.use("/invoices", authenticateMiddleware, invoiceRoutes);
+app.use("/dashboard", authenticateMiddleware, dashboardRoutes);
+app.use("/leads", authenticateMiddleware, leadRoutes);
+app.use("/employees", authenticateMiddleware, employeeRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);

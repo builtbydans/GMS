@@ -4,14 +4,11 @@ import {
   EmployeeDto,
   UpdateEmployeeDto,
 } from "@/types/employee.types";
-import { API_URL } from "@/config/api";
+import { apiFetch } from "@/lib/api";
 
 export const createEmployee = async (employeeData: CreateEmployeeDto) => {
-  const response = await fetch(`${API_URL}/employees`, {
+  const response = await apiFetch("/employees", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(employeeData),
   });
 
@@ -23,11 +20,8 @@ export const createEmployee = async (employeeData: CreateEmployeeDto) => {
 };
 
 export const getEmployees = async (): Promise<EmployeeDto[]> => {
-  const response = await fetch(`${API_URL}/employees`, {
+  const response = await apiFetch("/employees", {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
     cache: "no-store",
   });
 
@@ -41,11 +35,8 @@ export const getEmployees = async (): Promise<EmployeeDto[]> => {
 };
 
 export const getEmployeeById = async (id: string): Promise<EmployeeDto> => {
-  const response = await fetch(`${API_URL}/employees/${id}`, {
+  const response = await apiFetch(`/employees/${id}`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
     cache: "no-store",
   });
 
@@ -62,11 +53,8 @@ export const editEmployeeById = async (
   id: string,
   employeeData: UpdateEmployeeDto,
 ) => {
-  const response = await fetch(`${API_URL}/employees/${id}`, {
+  const response = await apiFetch(`/employees/${id}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(employeeData),
   });
 
@@ -81,11 +69,8 @@ export const changeEmployeePin = async (
   id: string,
   pinData: ChangeEmployeePinDto,
 ) => {
-  const response = await fetch(`${API_URL}/employees/${id}/pin`, {
+  const response = await apiFetch(`/employees/${id}/pin`, {
     method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(pinData),
   });
 
@@ -97,11 +82,8 @@ export const changeEmployeePin = async (
 };
 
 export const deleteEmployeeById = async (id: string) => {
-  const response = await fetch(`${API_URL}/employees/${id}`, {
+  const response = await apiFetch(`/employees/${id}`, {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
   });
 
   if (!response.ok) {

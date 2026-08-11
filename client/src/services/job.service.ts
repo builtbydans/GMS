@@ -1,13 +1,10 @@
 import { JobStatus } from "@/constants/job-status";
 import { JobSummaryDto } from "@/types/job.types";
-import { API_URL } from "@/config/api";
+import { apiFetch } from "@/lib/api";
 
 export const getJobs = async (): Promise<JobSummaryDto[]> => {
-  const response = await fetch(`${API_URL}/jobs`, {
+  const response = await apiFetch("/jobs", {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
     cache: "no-store",
   });
 
@@ -21,11 +18,8 @@ export const getJobs = async (): Promise<JobSummaryDto[]> => {
 };
 
 export const getJobById = async (id: string): Promise<JobSummaryDto> => {
-  const response = await fetch(`${API_URL}/jobs/${id}`, {
+  const response = await apiFetch(`/jobs/${id}`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
     cache: "no-store",
   });
 
@@ -39,11 +33,8 @@ export const getJobById = async (id: string): Promise<JobSummaryDto> => {
 };
 
 export const updateJobStatus = async (id: string, status: JobStatus) => {
-  const response = await fetch(`${API_URL}/jobs/${id}`, {
+  const response = await apiFetch(`/jobs/${id}`, {
     method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ status }),
   });
 
@@ -55,11 +46,8 @@ export const updateJobStatus = async (id: string, status: JobStatus) => {
 };
 
 export const startJob = async (id: string) => {
-  const response = await fetch(`${API_URL}/jobs/${id}/start`, {
+  const response = await apiFetch(`/jobs/${id}/start`, {
     method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
   });
 
   if (!response.ok) {
@@ -70,11 +58,8 @@ export const startJob = async (id: string) => {
 };
 
 export const completeJob = async (id: string) => {
-  const response = await fetch(`${API_URL}/jobs/${id}/complete`, {
+  const response = await apiFetch(`/jobs/${id}/complete`, {
     method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
   });
 
   if (!response.ok) {

@@ -1,12 +1,9 @@
 import { CreateCustomerDto, CustomerData } from "@/types/customer.types";
-import { API_URL } from "@/config/api";
+import { apiFetch } from "@/lib/api";
 
 export const createCustomer = async (customerData: CreateCustomerDto) => {
-  const response = await fetch(`${API_URL}/customers`, {
+  const response = await apiFetch("/customers", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(customerData),
   });
 
@@ -18,11 +15,8 @@ export const createCustomer = async (customerData: CreateCustomerDto) => {
 };
 
 export const getCustomers = async () => {
-  const response = await fetch(`${API_URL}/customers`, {
+  const response = await apiFetch("/customers", {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
   });
 
   if (!response.ok) {
@@ -36,12 +30,8 @@ export const getCustomers = async () => {
 };
 
 export const getCustomerById = async (id: string): Promise<CustomerData> => {
-  const response = await fetch(`${API_URL}/customers/${id}`, {
+  const response = await apiFetch(`/customers/${id}`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-
     cache: "no-store",
   });
 
@@ -57,12 +47,8 @@ export const getCustomerById = async (id: string): Promise<CustomerData> => {
 export const getCustomerVehicleById = async (
   id: string,
 ): Promise<CustomerData> => {
-  const response = await fetch(`${API_URL}/customers/${id}`, {
+  const response = await apiFetch(`/customers/${id}`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-
     cache: "no-store",
   });
 
@@ -79,11 +65,8 @@ export const editCustomerById = async (
   id: string,
   customerData: CreateCustomerDto,
 ) => {
-  const response = await fetch(`${API_URL}/customers/${id}`, {
+  const response = await apiFetch(`/customers/${id}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(customerData),
   });
 

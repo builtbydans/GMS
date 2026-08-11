@@ -3,14 +3,11 @@ import {
   LeadSummaryDto,
   QuoteLeadDto,
 } from "@/types/lead.types";
-import { API_URL } from "@/config/api";
+import { apiFetch } from "@/lib/api";
 
 export const createLead = async (leadData: CreateLeadDto) => {
-  const response = await fetch(`${API_URL}/leads`, {
+  const response = await apiFetch("/leads", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(leadData),
   });
 
@@ -22,11 +19,8 @@ export const createLead = async (leadData: CreateLeadDto) => {
 };
 
 export const getLeads = async () => {
-  const response = await fetch(`${API_URL}/leads`, {
+  const response = await apiFetch("/leads", {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
   });
 
   if (!response.ok) {
@@ -38,11 +32,8 @@ export const getLeads = async () => {
 };
 
 export const getLeadById = async (id: string): Promise<LeadSummaryDto> => {
-  const response = await fetch(`${API_URL}/leads/${id}`, {
+  const response = await apiFetch(`/leads/${id}`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
   });
 
   if (!response.ok) {
@@ -54,11 +45,8 @@ export const getLeadById = async (id: string): Promise<LeadSummaryDto> => {
 };
 
 export const quoteLead = async (id: string, quoteData: QuoteLeadDto) => {
-  const response = await fetch(`${API_URL}/leads/${id}/quote`, {
+  const response = await apiFetch(`/leads/${id}/quote`, {
     method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(quoteData),
   });
 
@@ -70,11 +58,8 @@ export const quoteLead = async (id: string, quoteData: QuoteLeadDto) => {
 };
 
 export const markLeadAsLost = async (id: string) => {
-  const response = await fetch(`${API_URL}/leads/${id}/lost`, {
+  const response = await apiFetch(`/leads/${id}/lost`, {
     method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
   });
 
   if (!response.ok) {
@@ -85,11 +70,8 @@ export const markLeadAsLost = async (id: string) => {
 };
 
 export const acceptQuote = async (id: string) => {
-  const response = await fetch(`${API_URL}/leads/${id}/accept`, {
+  const response = await apiFetch(`/leads/${id}/accept`, {
     method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
   });
 
   if (!response.ok) {
@@ -104,11 +86,8 @@ export const acceptQuote = async (id: string) => {
 };
 
 export const confirmDeposit = async (id: string) => {
-  const response = await fetch(`${API_URL}/jobs/${id}/confirm-deposit`, {
+  const response = await apiFetch(`/jobs/${id}/confirm-deposit`, {
     method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
   });
 
   if (!response.ok) {

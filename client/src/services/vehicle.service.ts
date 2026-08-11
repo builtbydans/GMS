@@ -1,12 +1,9 @@
 import { VehicleData, CreateVehicleDto } from "@/types/vehicle.types";
-import { API_URL } from "@/config/api";
+import { apiFetch } from "@/lib/api";
 
 export const getVehicles = async (): Promise<VehicleData[]> => {
-  const response = await fetch(`${API_URL}/vehicles`, {
+  const response = await apiFetch("/vehicles", {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
     cache: "no-store",
   });
 
@@ -20,11 +17,8 @@ export const getVehicles = async (): Promise<VehicleData[]> => {
 };
 
 export const createVehicle = async (vehicleData: CreateVehicleDto) => {
-  const response = await fetch(`${API_URL}/vehicles`, {
+  const response = await apiFetch("/vehicles", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(vehicleData),
   });
 
@@ -38,11 +32,8 @@ export const createVehicle = async (vehicleData: CreateVehicleDto) => {
 export const getVehiclesByCustomerId = async (
   customerId: string,
 ): Promise<VehicleData[]> => {
-  const response = await fetch(`${API_URL}/vehicles/customer/${customerId}`, {
+  const response = await apiFetch(`/vehicles/customer/${customerId}`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
     cache: "no-store",
   });
 

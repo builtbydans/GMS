@@ -1,12 +1,9 @@
-import { API_URL } from "@/config/api";
+import { apiFetch } from "@/lib/api";
 import { WorkshopDashboardDto } from "@/types/dashboard.types";
 
 export const getDashboardStats = async (): Promise<WorkshopDashboardDto> => {
-  const response = await fetch(`${API_URL}/dashboard/stats`, {
+  const response = await apiFetch("/dashboard/stats", {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
     cache: "no-store",
   });
 
