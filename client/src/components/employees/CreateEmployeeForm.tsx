@@ -39,7 +39,6 @@ const initialFormData: CreateEmployeeDto = {
   first_name: "",
   last_name: "",
   role: "TECHNICIAN",
-  pin: "",
 };
 
 const CreateEmployeeForm = () => {
@@ -81,7 +80,9 @@ const CreateEmployeeForm = () => {
       <CardHeader>
         <CardTitle>Employee details</CardTitle>
         <CardDescription>
-          Create a workshop account and choose the employee&apos;s access role.
+          Create a workshop staff profile and choose their access role. Sign-in
+          is handled by Supabase Auth — link their Auth user to this profile
+          after creating the account.
         </CardDescription>
       </CardHeader>
 
@@ -132,24 +133,6 @@ const CreateEmployeeForm = () => {
                 ))}
               </SelectContent>
             </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="pin">PIN</Label>
-            <Input
-              autoComplete="new-password"
-              id="pin"
-              inputMode="numeric"
-              name="pin"
-              onChange={handleChange}
-              required
-              type="password"
-              value={formData.pin}
-            />
-            <p className="text-xs text-muted-foreground">
-              This PIN is sent to the server and is never returned in employee
-              responses.
-            </p>
           </div>
 
           <div className="flex justify-end gap-2">

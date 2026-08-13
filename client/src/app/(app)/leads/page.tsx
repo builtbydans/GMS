@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ClipboardList, Plus } from "lucide-react";
 
-import { getLeads } from "@/services/lead.service";
+import { getLeads } from "@/services/lead.service.server";
 import { LeadsTable } from "@/components/leads/LeadsTable";
 import { Button } from "@/components/ui/button";
 

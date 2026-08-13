@@ -9,12 +9,18 @@ const {
   deleteCustomerById,
 } = require("./customer.controller");
 
+const { validateBody } = require("../../middleware/validate.middleware");
+const {
+  createCustomerSchema,
+  updateCustomerSchema,
+} = require("../../schemas/customer.schema");
+
 router.get("/", getCustomers);
 router.get("/:id", getCustomerById);
 
-router.post("/", createCustomer);
+router.post("/", validateBody(createCustomerSchema), createCustomer);
 
-router.put("/:id", updateCustomerById);
+router.put("/:id", validateBody(updateCustomerSchema), updateCustomerById);
 
 router.delete("/:id", deleteCustomerById);
 

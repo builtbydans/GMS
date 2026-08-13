@@ -1,4 +1,4 @@
-import { getLeadById } from "@/services/lead.service";
+import { getLeadById } from "@/services/lead.service.server";
 import { LeadDetailsCard } from "@/components/leads/LeadDetailsCard";
 
 interface LeadPageProps {

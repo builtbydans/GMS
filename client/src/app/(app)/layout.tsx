@@ -19,18 +19,18 @@ export default async function AppLayout({
   let navUser: NavUserData | null = null;
 
   if (user) {
-    const { data: profile } = await supabase
-      .from("profiles")
+    const { data: employee } = await supabase
+      .from("employees")
       .select("first_name, last_name")
-      .eq("id", user.id)
+      .eq("user_id", user.id)
       .maybeSingle();
 
-    const fullName = profile
-      ? `${profile.first_name} ${profile.last_name}`.trim()
+    const fullName = employee
+      ? `${employee.first_name} ${employee.last_name}`.trim()
       : (user.email ?? "User");
 
     navUser = {
-      firstName: profile?.first_name ?? fullName,
+      firstName: employee?.first_name ?? fullName,
       fullName,
       email: user.email ?? "",
       avatar: "",

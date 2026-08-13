@@ -1,6 +1,6 @@
 import { Wrench } from "lucide-react";
 
-import { getJobs } from "@/services/job.service";
+import { getJobs } from "@/services/job.service.server";
 import { JobsTable } from "@/components/jobs/JobsTable";
 
 const JobsPage = async () => {

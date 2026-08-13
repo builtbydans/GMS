@@ -3,7 +3,6 @@ const AppError = require("../../errors/AppError");
 import {
   CreateEmployeeRecordDto,
   UpdateEmployeeDto,
-  UpdateEmployeePinDto,
 } from "../../types/employee.types";
 
 const getEmployees = async () => {
@@ -48,25 +47,6 @@ const createEmployee = async (employeeData: CreateEmployeeRecordDto) => {
     }
 
     throw new AppError(error.message, 500);
-  }
-
-  return data;
-};
-
-const updateEmployeePin = async (id: string, pinData: UpdateEmployeePinDto) => {
-  const { data, error } = await supabase
-    .from("employees")
-    .update({
-      ...pinData,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", id)
-    .eq("active", true)
-    .select()
-    .single();
-
-  if (error) {
-    throw new Error(error.message);
   }
 
   return data;
@@ -118,6 +98,5 @@ module.exports = {
   getEmployeeById,
   createEmployee,
   updateEmployee,
-  updateEmployeePin,
   deleteEmployee,
 };

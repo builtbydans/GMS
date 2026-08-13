@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { TrendingUpIcon } from "lucide-react";
-import { getDashboardStats } from "@/services/dashboard.service";
+import { getDashboardStats } from "@/services/dashboard.service.server";
 import Link from "next/link";
 
 export async function SectionCards() {

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-import { getEmployeeById } from "@/services/employee.service";
+import { getEmployeeById } from "@/services/employee.service.server";
 import EmployeeDetailsCard from "@/components/employees/EmployeeDetailsCard";
 import { Button } from "@/components/ui/button";
 

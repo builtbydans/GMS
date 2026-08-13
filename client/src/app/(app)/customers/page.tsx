@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Plus, UsersRound } from "lucide-react";
 
-import { getCustomers } from "@/services/customer.service";
+import { getCustomers } from "@/services/customer.service.server";
 
 import { CustomerTable } from "@/components/customers/CustomerTable";
 import { Button } from "@/components/ui/button";

@@ -1,6 +1,6 @@
 import { CarFront } from "lucide-react";
 
-import { getVehicles } from "@/services/vehicle.service";
+import { getVehicles } from "@/services/vehicle.service.server";
 
 import { VehicleTable } from "@/components/vehicles/VehicleTable";
 

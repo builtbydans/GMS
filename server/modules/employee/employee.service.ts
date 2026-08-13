@@ -7,16 +7,11 @@ import {
   EmployeeDto,
   EmployeeRecord,
   UpdateEmployeeDto,
-  ChangeEmployeePinDto,
 } from "../../types/employee.types";
 
 const EMPLOYEE_ROLES = ["MANAGER", "TECHNICIAN", "ADMIN"] as const;
 
-const toEmployeeDto = (employee: EmployeeRecord): EmployeeDto => {
-  const { pin_hash, ...employeeDto } = employee;
-
-  return employeeDto;
-};
+const toEmployeeDto = (employee: EmployeeRecord): EmployeeDto => employee;
 
 const validateRole = (role: string) => {
   if (!EMPLOYEE_ROLES.includes(role as (typeof EMPLOYEE_ROLES)[number])) {
@@ -46,7 +41,6 @@ const createEmployee = async (
   const firstName = employeeData.first_name.trim();
   const lastName = employeeData.last_name.trim();
   const role = employeeData.role.trim().toUpperCase();
-  const pin = employeeData.pin.trim();
 
   if (!firstName || !lastName) {
     throw new AppError("First name and last name are required.", 400);
@@ -54,18 +48,10 @@ const createEmployee = async (
 
   validateRole(role);
 
-  if (!pin) {
-    throw new AppError("Employee PIN is required.", 400);
-  }
-
-  // Later:
-  // const pinHash = await bcrypt.hash(pin, 10);
-
   const employee = await employeeRepository.createEmployee({
     first_name: firstName,
     last_name: lastName,
     role,
-    pin_hash: pin, // Replace with pinHash later
   });
 
   const employeeDto = toEmployeeDto(employee);
@@ -148,38 +134,6 @@ const updateEmployee = async (
   return newEmployeeDto;
 };
 
-const changeEmployeePin = async (
-  id: string,
-  pinData: ChangeEmployeePinDto,
-): Promise<void> => {
-  const employee = await employeeRepository.getEmployeeById(id);
-
-  if (!employee) {
-    throw new AppError("Employee not found.", 404);
-  }
-
-  const pin = pinData.pin.trim();
-
-  if (!pin) {
-    throw new AppError("PIN is required.", 400);
-  }
-
-  // Later:
-  // const pinHash = await bcrypt.hash(pin, 10);
-
-  await employeeRepository.updateEmployeePin(id, {
-    pin_hash: pin, // Replace with pinHash later
-  });
-
-  await auditRepository.createAuditLog({
-    entity_type: "employee",
-    entity_id: id,
-    action: "CHANGE_PIN",
-    old_value: null,
-    new_value: null,
-  });
-};
-
 const deleteEmployee = async (id: string): Promise<EmployeeDto> => {
   const existingEmployee = await employeeRepository.getEmployeeById(id);
 
@@ -208,6 +162,5 @@ module.exports = {
   getEmployeeById,
   createEmployee,
   updateEmployee,
-  changeEmployeePin,
   deleteEmployee,
 };

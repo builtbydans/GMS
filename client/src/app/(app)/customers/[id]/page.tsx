@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { ArrowLeft, Mail, Phone, UserRound } from "lucide-react";
 
-import { getCustomerById } from "@/services/customer.service";
-import { getVehiclesByCustomerId } from "@/services/vehicle.service";
+import { getCustomerById } from "@/services/customer.service.server";
+import { getVehiclesByCustomerId } from "@/services/vehicle.service.server";
 
 import { CustomerVehiclesSection } from "@/components/customers/CustomerVehiclesSection";
 

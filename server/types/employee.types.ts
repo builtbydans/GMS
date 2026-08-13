@@ -1,5 +1,6 @@
 export interface EmployeeDto {
   id: string;
+  user_id: string | null;
   first_name: string;
   last_name: string;
   role: string;
@@ -9,22 +10,18 @@ export interface EmployeeDto {
   deleted_at: string | null;
 }
 
-export interface EmployeeRecord extends EmployeeDto {
-  pin_hash: string;
-}
+export type EmployeeRecord = EmployeeDto;
 
 export interface CreateEmployeeDto {
   first_name: string;
   last_name: string;
   role: string;
-  pin: string;
 }
 
 export interface CreateEmployeeRecordDto {
   first_name: string;
   last_name: string;
   role: string;
-  pin_hash: string;
 }
 
 export interface UpdateEmployeeDto {
@@ -32,12 +29,4 @@ export interface UpdateEmployeeDto {
   last_name?: string;
   role?: string;
   active?: boolean;
-}
-
-export interface UpdateEmployeePinDto {
-  pin_hash: string;
-}
-
-export interface ChangeEmployeePinDto {
-  pin: string;
 }

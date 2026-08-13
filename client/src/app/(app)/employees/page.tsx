@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Plus, UsersRound } from "lucide-react";
 
-import { getEmployees } from "@/services/employee.service";
+import { getEmployees } from "@/services/employee.service.server";
 import EmployeesTable from "@/components/employees/EmployeesTable";
 import { Button } from "@/components/ui/button";
 

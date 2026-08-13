@@ -73,25 +73,6 @@ const updateEmployee = async (
   }
 };
 
-const changeEmployeePin = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const id = req.params.id;
-
-    await employeeService.changeEmployeePin(id, req.body);
-
-    return res.status(200).json({
-      success: true,
-      message: "Employee PIN changed successfully.",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 const deleteEmployee = async (
   req: Request,
   res: Response,
@@ -116,6 +97,5 @@ module.exports = {
   getEmployeeById,
   createEmployee,
   updateEmployee,
-  changeEmployeePin,
   deleteEmployee,
 };

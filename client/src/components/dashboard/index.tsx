@@ -25,7 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { JOB_STATUS, JobStatus, formatJobStatus } from "@/constants/job-status";
-import { getDashboardStats } from "@/services/dashboard.service";
+import { getDashboardStats } from "@/services/dashboard.service.server";
 import {
   DashboardActivityDto,
   DashboardJobDto,

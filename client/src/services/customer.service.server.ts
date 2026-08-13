@@ -1,4 +1,6 @@
-import { apiFetch } from "@/lib/api";
+import "server-only";
+
+import { apiFetch } from "@/lib/api.server";
 import { createCustomerService } from "@/services/customer.api";
 
 export const {

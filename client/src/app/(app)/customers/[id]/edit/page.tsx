@@ -1,5 +1,5 @@
 import EditCustomerForm from "@/components/customers/EditCustomerForm";
-import { getCustomerById } from "@/services/customer.service";
+import { getCustomerById } from "@/services/customer.service.server";
 
 interface Props {
   params: Promise<{ id: string }>;

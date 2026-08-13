@@ -12,7 +12,6 @@ import {
 import { toast } from "sonner";
 
 import {
-  changeEmployeePin,
   deleteEmployeeById,
   editEmployeeById,
 } from "@/services/employee.service";
@@ -62,8 +61,6 @@ const EmployeeDetailsCard = ({ employee }: EmployeeDetailsCardProps) => {
   });
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [pin, setPin] = useState("");
-  const [changingPin, setChangingPin] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -103,23 +100,6 @@ const EmployeeDetailsCard = ({ employee }: EmployeeDetailsCardProps) => {
         error instanceof Error ? error.message : "Failed to delete employee",
       );
       setDeleting(false);
-    }
-  };
-
-  const handlePinChange = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setChangingPin(true);
-
-    try {
-      await changeEmployeePin(employee.id, { pin });
-      setPin("");
-      toast.success("Employee PIN changed successfully");
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to change employee PIN",
-      );
-    } finally {
-      setChangingPin(false);
     }
   };
 
@@ -243,6 +223,15 @@ const EmployeeDetailsCard = ({ employee }: EmployeeDetailsCardProps) => {
             <div className="flex gap-3">
               <ShieldCheck className="mt-0.5 size-4 text-muted-foreground" />
               <div>
+                <p className="font-medium">Linked Auth user</p>
+                <p className="break-all text-muted-foreground">
+                  {employee.user_id ?? "Not linked yet"}
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <ShieldCheck className="mt-0.5 size-4 text-muted-foreground" />
+              <div>
                 <p className="font-medium">Current role</p>
                 <p className="text-muted-foreground">
                   {roleLabels[employee.role]}
@@ -258,40 +247,6 @@ const EmployeeDetailsCard = ({ employee }: EmployeeDetailsCardProps) => {
                 </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Change PIN</CardTitle>
-            <CardDescription>
-              Replace the employee&apos;s current workshop PIN.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form className="space-y-3" onSubmit={handlePinChange}>
-              <div className="space-y-2">
-                <Label htmlFor="employee-pin">New PIN</Label>
-                <Input
-                  autoComplete="new-password"
-                  id="employee-pin"
-                  inputMode="numeric"
-                  onChange={(event) => setPin(event.target.value)}
-                  required
-                  type="password"
-                  value={pin}
-                />
-              </div>
-              <Button
-                className="w-full"
-                disabled={changingPin || !pin.trim()}
-                type="submit"
-                variant="outline"
-              >
-                {changingPin && <LoaderCircle className="animate-spin" />}
-                {changingPin ? "Changing PIN..." : "Change PIN"}
-              </Button>
-            </form>
           </CardContent>
         </Card>
       </div>

@@ -68,6 +68,7 @@ export async function updateSession(request: NextRequest) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
     loginUrl.search = "";
+    loginUrl.searchParams.set("error", "login_required");
 
     const redirectResponse = NextResponse.redirect(loginUrl);
 

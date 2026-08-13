@@ -10,12 +10,18 @@ const {
   acceptQuote,
 } = require("./lead.controller");
 
+const { validateBody } = require("../../middleware/validate.middleware");
+const {
+  createLeadSchema,
+  quoteLeadSchema,
+} = require("../../schemas/lead.schema");
+
 router.get("/", getLeads);
 router.get("/:id", getLeadById);
 
-router.post("/", createLead);
+router.post("/", validateBody(createLeadSchema), createLead);
 
-router.patch("/:id/quote", quoteLead);
+router.patch("/:id/quote", validateBody(quoteLeadSchema), quoteLead);
 router.patch("/:id/accept", acceptQuote);
 router.patch("/:id/lost", markLeadAsLost);
 

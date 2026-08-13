@@ -4,6 +4,7 @@ export type EmployeeRole = (typeof EMPLOYEE_ROLES)[number];
 
 export interface EmployeeDto {
   id: string;
+  user_id: string | null;
   first_name: string;
   last_name: string;
   role: EmployeeRole;
@@ -17,7 +18,6 @@ export interface CreateEmployeeDto {
   first_name: string;
   last_name: string;
   role: EmployeeRole;
-  pin: string;
 }
 
 export interface UpdateEmployeeDto {
@@ -25,8 +25,4 @@ export interface UpdateEmployeeDto {
   last_name?: string;
   role?: EmployeeRole;
   active?: boolean;
-}
-
-export interface ChangeEmployeePinDto {
-  pin: string;
 }

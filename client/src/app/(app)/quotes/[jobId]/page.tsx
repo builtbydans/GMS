@@ -1,5 +1,5 @@
 import CustomerQuoteCard from "@/components/leads/CustomerQuoteCard";
-import { getLeadById } from "@/services/lead.service";
+import { getLeadById } from "@/services/lead.service.server";
 
 interface Props {
   params: Promise<{ jobId: string }>;

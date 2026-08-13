@@ -1,5 +1,5 @@
 import JobDetailsCard from "@/components/jobs/JobDetailsCard";
-import { getJobById } from "@/services/job.service";
+import { getJobById } from "@/services/job.service.server";
 
 const JobDetailsPage = async ({
   params,
