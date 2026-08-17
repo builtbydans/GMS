@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { getErrorMessage } from "@/lib/api-error";
 import {
   deleteEmployeeById,
   editEmployeeById,
@@ -71,9 +72,7 @@ const EmployeeDetailsCard = ({ employee }: EmployeeDetailsCardProps) => {
       toast.success("Employee updated successfully");
       router.refresh();
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to update employee",
-      );
+      toast.error(getErrorMessage(error, "Failed to update employee"));
     } finally {
       setSaving(false);
     }
@@ -96,9 +95,7 @@ const EmployeeDetailsCard = ({ employee }: EmployeeDetailsCardProps) => {
       router.push("/employees");
       router.refresh();
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to delete employee",
-      );
+      toast.error(getErrorMessage(error, "Failed to delete employee"));
       setDeleting(false);
     }
   };

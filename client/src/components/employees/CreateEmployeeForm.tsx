@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
 
+import { getErrorMessage } from "@/lib/api-error";
 import { createEmployee } from "@/services/employee.service";
 import { Button } from "@/components/ui/button";
 import {
@@ -61,15 +62,13 @@ const CreateEmployeeForm = () => {
     setLoading(true);
 
     try {
-      const response = await createEmployee(formData);
+      const employee = await createEmployee(formData);
 
       toast.success("Employee created successfully");
-      router.push(`/employees/${response.data.id}`);
+      router.push(`/employees/${employee.id}`);
       router.refresh();
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to create employee",
-      );
+      toast.error(getErrorMessage(error, "Failed to create employee"));
     } finally {
       setLoading(false);
     }

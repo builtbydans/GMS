@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { CreateVehicleDto, VehicleFormData } from "@/types/vehicle.types";
-import { createVehicle } from "@/services/vehicle.service";
-import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
+import { getErrorMessage } from "@/lib/api-error";
+import { createVehicle } from "@/services/vehicle.service";
+import { CreateVehicleDto, VehicleFormData } from "@/types/vehicle.types";
+import { Button } from "../ui/button";
 
 type CreateVehicleFormProps = {
   customerId: string;
@@ -40,8 +43,8 @@ export const CreateVehicleForm = ({ customerId }: CreateVehicleFormProps) => {
       };
 
       await createVehicle(vehicleData);
-      alert("Vehicle created!");
 
+      toast.success("Vehicle created");
       router.refresh();
 
       setFormData({
@@ -50,9 +53,7 @@ export const CreateVehicleForm = ({ customerId }: CreateVehicleFormProps) => {
         model: "",
       });
     } catch (error) {
-      console.error(error);
-
-      alert("Failed to create customer");
+      toast.error(getErrorMessage(error, "Failed to create vehicle"));
     } finally {
       setLoading(false);
     }

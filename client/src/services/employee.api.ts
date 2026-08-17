@@ -6,76 +6,34 @@ import type {
 } from "@/types/employee.types";
 
 export function createEmployeeService(apiFetch: ApiFetch) {
-  const createEmployee = async (employeeData: CreateEmployeeDto) => {
-    const response = await apiFetch("/employees", {
+  const createEmployee = (employeeData: CreateEmployeeDto) =>
+    apiFetch<EmployeeDto>("/employees", {
       method: "POST",
       body: JSON.stringify(employeeData),
     });
 
-    if (!response.ok) {
-      throw new Error("Failed to create employee");
-    }
-
-    return response.json();
-  };
-
-  const getEmployees = async (): Promise<EmployeeDto[]> => {
-    const response = await apiFetch("/employees", {
+  const getEmployees = () =>
+    apiFetch<EmployeeDto[]>("/employees", {
       method: "GET",
       cache: "no-store",
     });
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch employees");
-    }
-
-    const result = await response.json();
-
-    return result.data;
-  };
-
-  const getEmployeeById = async (id: string): Promise<EmployeeDto> => {
-    const response = await apiFetch(`/employees/${id}`, {
+  const getEmployeeById = (id: string) =>
+    apiFetch<EmployeeDto>(`/employees/${id}`, {
       method: "GET",
       cache: "no-store",
     });
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch employee");
-    }
-
-    const result = await response.json();
-
-    return result.data;
-  };
-
-  const editEmployeeById = async (
-    id: string,
-    employeeData: UpdateEmployeeDto,
-  ) => {
-    const response = await apiFetch(`/employees/${id}`, {
+  const editEmployeeById = (id: string, employeeData: UpdateEmployeeDto) =>
+    apiFetch<EmployeeDto>(`/employees/${id}`, {
       method: "PUT",
       body: JSON.stringify(employeeData),
     });
 
-    if (!response.ok) {
-      throw new Error("Failed to update employee");
-    }
-
-    return response.json();
-  };
-
-  const deleteEmployeeById = async (id: string) => {
-    const response = await apiFetch(`/employees/${id}`, {
+  const deleteEmployeeById = (id: string) =>
+    apiFetch<EmployeeDto>(`/employees/${id}`, {
       method: "DELETE",
     });
-
-    if (!response.ok) {
-      throw new Error("Failed to delete employee");
-    }
-
-    return response.json();
-  };
 
   return {
     createEmployee,

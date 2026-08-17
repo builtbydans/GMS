@@ -6,6 +6,7 @@ import {
   ACTIVE_JOB_STATUSES,
   JOB_STATUS,
   LEAD_STATUSES,
+  JobStatus,
 } from "../../constants/job-status";
 
 import { CreateJobDto, UpdateJobDto } from "../../types/job.types";
@@ -236,30 +237,15 @@ const deleteJobById = async (id: string) => {
   return data;
 };
 
-const startJob = async (id: string) => {
+const updateJobStatus = async (id: string, status: JobStatus) => {
   const { data, error } = await supabase
     .from("jobs")
     .update({
-      status: JOB_STATUS.IN_PROGRESS,
+      status,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)
-    .select()
-    .single();
-
-  if (error) throw error;
-
-  return data;
-};
-
-const completeJob = async (id: string) => {
-  const { data, error } = await supabase
-    .from("jobs")
-    .update({
-      status: JOB_STATUS.COMPLETED,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", id)
+    .is("deleted_at", null)
     .select()
     .single();
 
@@ -280,6 +266,5 @@ module.exports = {
   updateJobById,
   deleteJobById,
   markLeadAsLost,
-  startJob,
-  completeJob,
+  updateJobStatus,
 };

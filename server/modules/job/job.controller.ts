@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import type { AuthenticatedRequest } from "../../types/auth.types";
 
 const jobService = require("./job.service");
 
@@ -93,30 +94,23 @@ const confirmDeposit = async (
   }
 };
 
-const startJob = async (req: Request, res: Response, next: NextFunction) => {
+const transitionJob = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const id = req.params.id;
 
-    const startedJob = await jobService.startJob(id);
-
-    return res.status(200).json({
-      success: true,
-      data: startedJob,
+    const transitionedJob = await jobService.transitionJob(id, {
+      targetStatus: req.body.targetStatus,
+      reason: req.body.reason,
+      actorId: req.auth.userId,
     });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const completeJob = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const id = req.params.id;
-
-    const completedJob = await jobService.completeJob(id);
 
     return res.status(200).json({
       success: true,
-      data: completedJob,
+      data: transitionedJob,
     });
   } catch (error) {
     next(error);
@@ -130,6 +124,5 @@ module.exports = {
   updateJob,
   deleteJob,
   confirmDeposit,
-  startJob,
-  completeJob,
+  transitionJob,
 };

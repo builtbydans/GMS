@@ -1,7 +1,10 @@
 "use client";
 
-import { markLeadAsLost } from "@/services/lead.service";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
+import { getErrorMessage } from "@/lib/api-error";
+import { markLeadAsLost } from "@/services/lead.service";
 import { Button } from "../ui/button";
 
 interface MarkLeadLostProps {
@@ -12,8 +15,13 @@ const MarkLeadLostButton = ({ leadId }: MarkLeadLostProps) => {
   const router = useRouter();
 
   const handleClick = async () => {
-    await markLeadAsLost(leadId);
-    router.refresh();
+    try {
+      await markLeadAsLost(leadId);
+      toast.success("Lead marked as lost");
+      router.refresh();
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Failed to mark lead as lost"));
+    }
   };
 
   return (

@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
-import { createApiFetch } from "@/lib/create-api-fetch";
+import { createApiFetch, redirectToLogin } from "@/lib/create-api-fetch";
 
 async function getAccessToken(): Promise<string | null> {
   const supabase = createClient();
@@ -10,4 +10,4 @@ async function getAccessToken(): Promise<string | null> {
 }
 
 /** Browser / Client Component API calls. Never import supabase/server here. */
-export const apiFetch = createApiFetch(getAccessToken);
+export const apiFetch = createApiFetch(getAccessToken, redirectToLogin);

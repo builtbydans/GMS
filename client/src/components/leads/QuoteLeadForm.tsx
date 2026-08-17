@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { getErrorMessage } from "@/lib/api-error";
 import { quoteLead } from "@/services/lead.service";
 import { QuoteLeadDto } from "@/types/lead.types";
 import { useRouter } from "next/navigation";
@@ -28,14 +29,10 @@ export const QuoteLeadForm = ({ leadId }: QuoteLeadFormProps) => {
     try {
       await quoteLead(leadId, quoteData);
 
-      toast("Quote has been successfully sent to customer", {
-        position: "top-center",
-      });
-
+      toast.success("Quote has been successfully sent to customer");
       router.refresh();
     } catch (error) {
-      console.error(error);
-      alert("Failed to send quote");
+      toast.error(getErrorMessage(error, "Failed to send quote"));
     }
   };
   return (

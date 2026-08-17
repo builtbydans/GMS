@@ -19,7 +19,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { completeJob, startJob, updateJobStatus } from "@/services/job.service";
+import { getErrorMessage } from "@/lib/api-error";
+import { transitionJob } from "@/services/job.service";
 import StatusBadge from "@/components/StatusBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -91,20 +92,12 @@ const JobDetailsCard = ({ job }: JobDetailsProps) => {
     setPendingStatus(nextStatus);
 
     try {
-      if (nextStatus === JOB_STATUS.IN_PROGRESS) {
-        await startJob(job.id);
-      } else if (nextStatus === JOB_STATUS.COMPLETED) {
-        await completeJob(job.id);
-      } else {
-        await updateJobStatus(job.id, nextStatus);
-      }
+      await transitionJob(job.id, nextStatus);
 
       toast.success(`Job moved to ${formatJobStatus(nextStatus)}`);
       router.refresh();
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Unable to update job status",
-      );
+      toast.error(getErrorMessage(error, "Unable to update job status"));
     } finally {
       setPendingStatus(null);
     }

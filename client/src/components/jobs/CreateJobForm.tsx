@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
+
+import { getErrorMessage } from "@/lib/api-error";
 import { createCustomer } from "@/services/customer.service";
 import { CreateCustomerDto } from "@/types/customer.types";
 import { Button } from "../ui/button";
@@ -28,11 +31,9 @@ export const CreateCustomerForm = () => {
     try {
       setLoading(true);
 
-      const result = await createCustomer(formData);
+      await createCustomer(formData);
 
-      console.log(result);
-
-      alert("Customer created!");
+      toast.success("Customer created");
 
       setFormData({
         first_name: "",
@@ -41,9 +42,7 @@ export const CreateCustomerForm = () => {
         phone: "",
       });
     } catch (error) {
-      console.error(error);
-
-      alert("Failed to create customer");
+      toast.error(getErrorMessage(error, "Failed to create customer"));
     } finally {
       setLoading(false);
     }

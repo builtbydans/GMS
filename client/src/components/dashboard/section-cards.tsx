@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { TrendingUpIcon } from "lucide-react";
 import { getDashboardStats } from "@/services/dashboard.service.server";
+import { unstable_rethrow } from "next/navigation";
 import Link from "next/link";
 
 export async function SectionCards() {
@@ -16,7 +17,8 @@ export async function SectionCards() {
 
   try {
     stats = await getDashboardStats();
-  } catch {
+  } catch (error) {
+    unstable_rethrow(error);
     return (
       <p>Something has gone wrong with retrieving your dashboard statistics.</p>
     );

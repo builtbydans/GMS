@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/table";
 import { JOB_STATUS, JobStatus, formatJobStatus } from "@/constants/job-status";
 import { getDashboardStats } from "@/services/dashboard.service.server";
+import { unstable_rethrow } from "next/navigation";
 import {
   DashboardActivityDto,
   DashboardJobDto,
@@ -203,7 +204,8 @@ const Dashboard = async () => {
 
   try {
     stats = await getDashboardStats();
-  } catch {
+  } catch (error) {
+    unstable_rethrow(error);
     return (
       <main className="p-5">
         <Card>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CreateCustomerDto, CustomerData } from "@/types/customer.types";
+import { getErrorMessage } from "@/lib/api-error";
 import { editCustomerById } from "@/services/customer.service";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
@@ -38,11 +39,10 @@ const EditCustomerForm = ({ customer }: Props) => {
 
       await editCustomerById(customer.id, formData);
 
-      toast("Customer successfully edited", { position: "top-center" });
+      toast.success("Customer successfully edited");
       router.push(`/customers/${customer.id}`);
     } catch (error) {
-      console.error(error);
-      alert("Failed to edit customer");
+      toast.error(getErrorMessage(error, "Failed to edit customer"));
     } finally {
       setLoading(false);
     }

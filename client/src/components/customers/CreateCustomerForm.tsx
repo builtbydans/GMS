@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
+import { toast } from "sonner";
 
+import { getErrorMessage } from "@/lib/api-error";
 import { createCustomer } from "@/services/customer.service";
 import { CreateCustomerDto } from "@/types/customer.types";
 import { Button } from "@/components/ui/button";
@@ -17,13 +20,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export const CreateCustomerForm = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState<CreateCustomerDto>({
     first_name: "",
     last_name: "",
     email: "",
     phone: "",
   });
-
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,23 +42,15 @@ export const CreateCustomerForm = () => {
 
     try {
       setLoading(true);
+      setError(null);
 
-      const result = await createCustomer(formData);
+      const customer = await createCustomer(formData);
 
-      console.log(result);
-
-      alert("Customer created!");
-
-      setFormData({
-        first_name: "",
-        last_name: "",
-        email: "",
-        phone: "",
-      });
-    } catch (error) {
-      console.error(error);
-
-      alert("Failed to create customer");
+      toast.success("Customer created");
+      router.push(`/customers/${customer.id}`);
+      router.refresh();
+    } catch (err) {
+      setError(getErrorMessage(err, "Failed to create customer"));
     } finally {
       setLoading(false);
     }
@@ -122,6 +118,12 @@ export const CreateCustomerForm = () => {
               value={formData.phone}
             />
           </div>
+
+          {error && (
+            <p className="text-sm text-destructive" role="alert">
+              {error}
+            </p>
+          )}
 
           <div className="flex justify-end">
             <Button disabled={loading} type="submit">

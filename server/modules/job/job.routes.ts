@@ -7,19 +7,23 @@ const {
   createJob,
   updateJob,
   deleteJob,
-  startJob,
-  completeJob,
   confirmDeposit,
+  transitionJob,
 } = require("./job.controller");
+
+const { validateBody } = require("../../middleware/validate.middleware");
+const { transitionJobSchema } = require("../../schemas/job.schema");
 
 router.get("/", getJobs);
 router.get("/:id", getJobById);
 router.post("/", createJob);
-router.delete("/:id", deleteJob);
-
-router.patch("/:id/start", startJob);
-router.patch("/:id", updateJob);
-router.patch("/:id/complete", completeJob);
+router.post(
+  "/:id/transitions",
+  validateBody(transitionJobSchema),
+  transitionJob,
+);
 router.patch("/:id/confirm-deposit", confirmDeposit);
+router.patch("/:id", updateJob);
+router.delete("/:id", deleteJob);
 
 module.exports = router;

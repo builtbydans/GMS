@@ -16,3 +16,9 @@ export interface UpdateJobDto {
   deposit_amount?: number;
   deposit_received_at?: string;
 }
+
+export interface TransitionJobDto {
+  targetStatus: JobStatus;
+  reason?: string;
+  actorId?: string;
+}

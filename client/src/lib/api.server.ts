@@ -1,5 +1,8 @@
 import "server-only";
 
+import { redirect } from "next/navigation";
+
+import { LOGIN_PATH } from "@/config/api";
 import { createClient } from "@/lib/supabase/server";
 import { createApiFetch } from "@/lib/create-api-fetch";
 
@@ -12,4 +15,6 @@ async function getAccessToken(): Promise<string | null> {
 }
 
 /** Server Component / RSC API calls. Safe to use next/headers. */
-export const apiFetch = createApiFetch(getAccessToken);
+export const apiFetch = createApiFetch(getAccessToken, () => {
+  redirect(LOGIN_PATH);
+});

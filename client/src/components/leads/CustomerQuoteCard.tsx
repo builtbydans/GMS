@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
+import { getErrorMessage } from "@/lib/api-error";
 import { Button } from "@/components/ui/button";
 import {
   acceptQuote,
@@ -21,21 +24,30 @@ const CustomerQuoteCard = ({ job }: CustomerQuoteCardProps) => {
   const [reject, setReject] = useState(false);
 
   const handleAccept = async () => {
-    await acceptQuote(job.id);
-
-    router.refresh();
+    try {
+      await acceptQuote(job.id);
+      router.refresh();
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Failed to accept quote"));
+    }
   };
 
   const handleReject = async () => {
-    await markLeadAsLost(job.id);
-
-    setReject(true);
+    try {
+      await markLeadAsLost(job.id);
+      setReject(true);
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Failed to reject quote"));
+    }
   };
 
   const handleDepositPayment = async () => {
-    await confirmDeposit(job.id);
-
-    router.refresh();
+    try {
+      await confirmDeposit(job.id);
+      router.refresh();
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Failed to confirm deposit"));
+    }
   };
 
   const depositAmount = (Number(job.quoted_cost ?? 0) * 0.1).toFixed(2);

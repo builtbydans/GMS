@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
 
+import { getErrorMessage } from "@/lib/api-error";
 import { createLead } from "@/services/lead.service";
 import { CreateLeadDto } from "@/types/lead.types";
 import { Button } from "@/components/ui/button";
@@ -51,14 +52,10 @@ const CreateLeadForm = () => {
 
       await createLead(formData);
 
-      toast("Your enquiry has been sent to the GMS Team", {
-        position: "top-center",
-      });
+      toast.success("Your enquiry has been sent to the GMS Team");
       router.push(`/`);
     } catch (error) {
-      console.error(error);
-
-      alert("Failed to create customer");
+      toast.error(getErrorMessage(error, "Failed to create lead"));
     } finally {
       setLoading(false);
     }

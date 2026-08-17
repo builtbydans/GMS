@@ -1,8 +1,12 @@
 const jobRepository = require("./job.repository");
 const auditRepository = require("../audit/audit.repository");
 const jobUpdateService = require("../job/updates/job-update.service");
-const AppError = require("../../errors/AppError");
-import { CreateJobDto, UpdateJobDto } from "../../types/job.types";
+const { AppError, ERROR_CODES } = require("../../errors/AppError");
+import {
+  CreateJobDto,
+  TransitionJobDto,
+  UpdateJobDto,
+} from "../../types/job.types";
 import { QuoteLeadDto } from "../../types/lead.types";
 import {
   JOB_STATUS,
@@ -14,12 +18,16 @@ const validateStatusTransition = (
   currentStatus: string,
   nextStatus: JobStatus,
 ) => {
-  const allowedTransitions = JOB_TRANSITIONS[currentStatus as JobStatus] ?? [];
+  const allowedNext = [
+    ...(JOB_TRANSITIONS[currentStatus as JobStatus] ?? []),
+  ];
 
-  if (!allowedTransitions.includes(nextStatus)) {
+  if (!allowedNext.includes(nextStatus)) {
     throw new AppError(
       `Invalid job status transition: ${currentStatus} -> ${nextStatus}`,
-      400,
+      409,
+      ERROR_CODES.INVALID_STATUS_TRANSITION,
+      { allowedNext },
     );
   }
 };
@@ -158,11 +166,11 @@ const updateJobById = async (id: string, updatedData: UpdateJobDto) => {
   }
 
   if (updatedData.status !== undefined) {
-    validateStatusTransition(existingJob.status, updatedData.status);
-  }
-
-  if (updatedData.status) {
-    await jobUpdateService.createWorkflowUpdate(id, updatedData.status);
+    throw new AppError(
+      "Use POST /jobs/:id/transitions to change job status",
+      400,
+      ERROR_CODES.VALIDATION_ERROR,
+    );
   }
 
   const updatedJob = await jobRepository.updateJobById(id, updatedData);
@@ -198,49 +206,33 @@ const deleteJobById = async (id: string) => {
   return deletedJob;
 };
 
-const startJob = async (id: string) => {
+const transitionJob = async (id: string, command: TransitionJobDto) => {
   const job = await jobRepository.getJobById(id);
 
   if (!job) {
-    throw new AppError("Job not found", 404);
+    throw new AppError("Job not found", 404, ERROR_CODES.NOT_FOUND);
   }
 
-  validateStatusTransition(job.status, JOB_STATUS.IN_PROGRESS);
+  validateStatusTransition(job.status, command.targetStatus);
 
-  const updatedJob = await jobRepository.startJob(id);
+  const updatedJob = await jobRepository.updateJobStatus(
+    id,
+    command.targetStatus,
+  );
 
-  await jobUpdateService.createWorkflowUpdate(id, JOB_STATUS.IN_PROGRESS);
+  await jobUpdateService.createWorkflowUpdate(
+    id,
+    command.targetStatus,
+    command.reason,
+  );
 
   await auditRepository.createAuditLog({
     entity_type: "job",
     entity_id: id,
-    action: "START",
+    action: "TRANSITION",
     old_value: job,
     new_value: updatedJob,
-  });
-
-  return updatedJob;
-};
-
-const completeJob = async (id: string) => {
-  const job = await jobRepository.getJobById(id);
-
-  if (!job) {
-    throw new AppError("Job not found", 404);
-  }
-
-  validateStatusTransition(job.status, JOB_STATUS.COMPLETED);
-
-  const updatedJob = await jobRepository.completeJob(id);
-
-  await jobUpdateService.createWorkflowUpdate(id, JOB_STATUS.COMPLETED);
-
-  await auditRepository.createAuditLog({
-    entity_type: "job",
-    entity_id: id,
-    action: "COMPLETE",
-    old_value: job,
-    new_value: updatedJob,
+    created_by: command.actorId ?? null,
   });
 
   return updatedJob;
@@ -258,6 +250,5 @@ module.exports = {
   updateJobById,
   deleteJobById,
   markLeadAsLost,
-  startJob,
-  completeJob,
+  transitionJob,
 };
