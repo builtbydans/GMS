@@ -1,4 +1,5 @@
 import JobDetailsCard from "@/components/jobs/JobDetailsCard";
+import { getEmployees } from "@/services/employee.service.server";
 import { getJobById } from "@/services/job.service.server";
 
 const JobDetailsPage = async ({
@@ -7,11 +8,14 @@ const JobDetailsPage = async ({
   params: Promise<{ id: string }>;
 }) => {
   const { id } = await params;
-  const job = await getJobById(id);
+  const [job, employees] = await Promise.all([getJobById(id), getEmployees()]);
+  const technicians = employees.filter(
+    (employee) => employee.role === "TECHNICIAN",
+  );
 
   return (
     <>
-      <JobDetailsCard job={job} />
+      <JobDetailsCard job={job} technicians={technicians} />
     </>
   );
 };

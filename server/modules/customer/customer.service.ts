@@ -1,6 +1,6 @@
 const customerRepository = require("./customer.repository");
 const auditRepository = require("../audit/audit.repository");
-const AppError = require("../../errors/AppError");
+const { AppError } = require("../../errors/AppError");
 import {
   CreateCustomerDto,
   UpdateCustomerDto,

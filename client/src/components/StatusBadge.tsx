@@ -31,8 +31,10 @@ const getStatusClassName = (status: JobStatus) => {
     case JOB_STATUS.READY_FOR_COLLECTION:
       return "border-cyan-200 bg-cyan-50 text-cyan-700 dark:border-cyan-900 dark:bg-cyan-950/40 dark:text-cyan-300";
 
-    case JOB_STATUS.COMPLETED:
     case JOB_STATUS.INVOICED:
+      return "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-300";
+
+    case JOB_STATUS.COMPLETED:
     case JOB_STATUS.PAID:
       return "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300";
 

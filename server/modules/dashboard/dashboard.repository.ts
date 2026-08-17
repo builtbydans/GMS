@@ -22,6 +22,7 @@ const DASHBOARD_STATUSES: JobStatus[] = [
   JOB_STATUS.AWAITING_REVIEW,
   JOB_STATUS.FINAL_INSPECTION,
   JOB_STATUS.READY_FOR_COLLECTION,
+  JOB_STATUS.INVOICED,
   JOB_STATUS.COMPLETED,
 ];
 
@@ -151,7 +152,11 @@ const getDashboardStats = async (): Promise<DashboardStatsDto> => {
       `,
       )
       .is("deleted_at", null)
-      .in("status", [...WORKSHOP_STATUSES, JOB_STATUS.READY_FOR_COLLECTION])
+      .in("status", [
+        ...WORKSHOP_STATUSES,
+        JOB_STATUS.READY_FOR_COLLECTION,
+        JOB_STATUS.INVOICED,
+      ])
       .order("updated_at", { ascending: false })
       .limit(5),
     supabase

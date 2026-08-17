@@ -4,6 +4,7 @@ import {
   CalendarClock,
   CarFront,
   ClipboardList,
+  MessageSquareWarning,
   PackageCheck,
 } from "lucide-react";
 
@@ -30,6 +31,7 @@ import { unstable_rethrow } from "next/navigation";
 import {
   DashboardActivityDto,
   DashboardJobDto,
+  DashboardRaiseDto,
   WorkshopDashboardDto,
 } from "@/types/dashboard.types";
 import { formatRelativeDate } from "@/utils/date";
@@ -48,6 +50,7 @@ const dashboardStatusOrder: JobStatus[] = [
   JOB_STATUS.AWAITING_REVIEW,
   JOB_STATUS.FINAL_INSPECTION,
   JOB_STATUS.READY_FOR_COLLECTION,
+  JOB_STATUS.INVOICED,
   JOB_STATUS.COMPLETED,
 ];
 
@@ -73,6 +76,62 @@ const KpiCard = ({ title, value, description, icon: Icon }: KpiCardProps) => (
     </CardHeader>
     <CardContent>
       <p className="text-sm text-muted-foreground">{description}</p>
+    </CardContent>
+  </Card>
+);
+
+const NeedsAttention = ({ raises }: { raises: DashboardRaiseDto[] }) => (
+  <Card className={raises.length > 0 ? "border-amber-300 dark:border-amber-800" : undefined}>
+    <CardHeader className="flex flex-row items-center justify-between gap-4">
+      <div>
+        <CardTitle className="flex items-center gap-2">
+          <MessageSquareWarning className="size-4" />
+          Needs attention
+        </CardTitle>
+        <CardDescription>
+          Technician raises that have not been acknowledged
+        </CardDescription>
+      </div>
+      <span className="rounded-md bg-muted px-2 py-1 text-sm font-semibold tabular-nums">
+        {raises.length}
+      </span>
+    </CardHeader>
+    <CardContent>
+      {raises.length === 0 ? (
+        <div className="flex min-h-32 items-center justify-center rounded-lg border border-dashed text-sm text-muted-foreground">
+          No open raises right now.
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {raises.map((raise) => (
+            <Link
+              className="block rounded-lg border p-4 transition-colors hover:border-primary"
+              href={`/jobs/${raise.job_id}`}
+              key={raise.id}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-medium">
+                    {raise.raised_by.first_name} {raise.raised_by.last_name}{" "}
+                    has left a note
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {raise.job_number}
+                    {raise.vehicles
+                      ? ` · ${formatRegistration(raise.vehicles.registration)}`
+                      : ""}
+                  </p>
+                  <p className="mt-2 line-clamp-2 text-sm">{raise.latest_note}</p>
+                </div>
+                <StatusBadge status={raise.job_status as JobStatus} />
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                {formatRelativeDate(raise.updated_at)}
+              </p>
+            </Link>
+          ))}
+        </div>
+      )}
     </CardContent>
   </Card>
 );
@@ -260,6 +319,8 @@ const Dashboard = async () => {
           value={stats.readyForCollection}
         />
       </section>
+
+      <NeedsAttention raises={stats.openRaises ?? []} />
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
         <TodaysJobs jobs={stats.todaysJobs} />

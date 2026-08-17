@@ -22,6 +22,7 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 import { LoginFormSchema } from "@/schemas/auth";
 import { createClient } from "@/lib/supabase/client";
 
@@ -152,8 +153,11 @@ export function LoginForm({
                   {loading && <LoaderCircle className="animate-spin" />}
                   {loading ? "Signing in..." : "Login"}
                 </Button>
+                <Button asChild variant="outline">
+                  <Link href="/technician/login">Login as Technician</Link>
+                </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="#">Sign up</a>
+                  Workshop tablets should stay on the technician PIN screen.
                 </FieldDescription>
               </Field>
             </FieldGroup>

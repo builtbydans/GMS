@@ -1,5 +1,5 @@
 import { CreateLeadDto, QuoteLeadDto } from "../../types/lead.types";
-const AppError = require("../../errors/AppError");
+const { AppError } = require("../../errors/AppError");
 const customerService = require("../customer/customer.service");
 const vehicleService = require("../vehicle/vehicle.service");
 const jobService = require("../job/job.service");

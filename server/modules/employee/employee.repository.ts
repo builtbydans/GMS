@@ -1,8 +1,8 @@
 import supabase from "../../config/db/supabase";
-const AppError = require("../../errors/AppError");
+const { AppError } = require("../../errors/AppError");
 import {
   CreateEmployeeRecordDto,
-  UpdateEmployeeDto,
+  UpdateEmployeeRecordDto,
 } from "../../types/employee.types";
 
 const getEmployees = async () => {
@@ -17,6 +17,36 @@ const getEmployees = async () => {
   }
 
   return data;
+};
+
+const getEmployeeByUserId = async (userId: string) => {
+  const { data, error } = await supabase
+    .from("employees")
+    .select("id, user_id, first_name, last_name, role, active")
+    .eq("user_id", userId)
+    .eq("active", true)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+const getTechnicians = async () => {
+  const { data, error } = await supabase
+    .from("employees")
+    .select("id, first_name, last_name")
+    .eq("active", true)
+    .eq("role", "TECHNICIAN")
+    .order("first_name", { ascending: true });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data ?? [];
 };
 
 const getEmployeeById = async (id: string) => {
@@ -52,7 +82,7 @@ const createEmployee = async (employeeData: CreateEmployeeRecordDto) => {
   return data;
 };
 
-const updateEmployee = async (id: string, updatedData: UpdateEmployeeDto) => {
+const updateEmployee = async (id: string, updatedData: UpdateEmployeeRecordDto) => {
   const { data, error } = await supabase
     .from("employees")
     .update({
@@ -96,6 +126,8 @@ const deleteEmployee = async (id: string) => {
 module.exports = {
   getEmployees,
   getEmployeeById,
+  getEmployeeByUserId,
+  getTechnicians,
   createEmployee,
   updateEmployee,
   deleteEmployee,

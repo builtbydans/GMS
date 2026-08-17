@@ -1,4 +1,7 @@
 import { JobStatus } from "@/constants/job-status";
+import type { DashboardRaiseDto } from "./job-raise.types";
+
+export type { DashboardRaiseDto };
 
 export interface WorkshopDashboardDto {
   customers: number;
@@ -13,6 +16,8 @@ export interface WorkshopDashboardDto {
   jobsByStatus: Record<JobStatus, number>;
   todaysJobs: DashboardJobDto[];
   recentActivity: DashboardActivityDto[];
+  openRaises: DashboardRaiseDto[];
+  openRaiseCount: number;
 }
 
 export interface DashboardJobDto {

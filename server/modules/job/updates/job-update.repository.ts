@@ -1,5 +1,5 @@
 import supabase from "../../../config/db/supabase";
-const AppError = require("../../../errors/AppError");
+const { AppError } = require("../../../errors/AppError");
 import { CreateJobUpdateDto } from "../../../types/job-update.types";
 
 const createJobUpdate = async (jobUpdateData: CreateJobUpdateDto) => {

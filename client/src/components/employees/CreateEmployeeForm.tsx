@@ -40,6 +40,7 @@ const initialFormData: CreateEmployeeDto = {
   first_name: "",
   last_name: "",
   role: "TECHNICIAN",
+  pin: "",
 };
 
 const CreateEmployeeForm = () => {
@@ -62,7 +63,10 @@ const CreateEmployeeForm = () => {
     setLoading(true);
 
     try {
-      const employee = await createEmployee(formData);
+      const employee = await createEmployee({
+        ...formData,
+        pin: formData.pin?.trim() || undefined,
+      });
 
       toast.success("Employee created successfully");
       router.push(`/employees/${employee.id}`);
@@ -79,9 +83,8 @@ const CreateEmployeeForm = () => {
       <CardHeader>
         <CardTitle>Employee details</CardTitle>
         <CardDescription>
-          Create a workshop staff profile and choose their access role. Sign-in
-          is handled by Supabase Auth — link their Auth user to this profile
-          after creating the account.
+          Create a workshop staff profile and choose their access role.
+          Technicians need a 5-digit PIN for the workshop floor tablet.
         </CardDescription>
       </CardHeader>
 
@@ -132,6 +135,25 @@ const CreateEmployeeForm = () => {
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="pin">Workshop PIN</Label>
+            <Input
+              id="pin"
+              inputMode="numeric"
+              maxLength={5}
+              name="pin"
+              onChange={handleChange}
+              pattern="\d{5}"
+              placeholder="5-digit PIN"
+              required={formData.role === "TECHNICIAN"}
+              value={formData.pin ?? ""}
+            />
+            <p className="text-sm text-muted-foreground">
+              Required for technicians. Used on /technician/login, not the
+              office email login.
+            </p>
           </div>
 
           <div className="flex justify-end gap-2">

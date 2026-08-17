@@ -59,6 +59,7 @@ const EmployeeDetailsCard = ({ employee }: EmployeeDetailsCardProps) => {
     first_name: employee.first_name,
     last_name: employee.last_name,
     role: employee.role,
+    pin: "",
   });
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -68,7 +69,10 @@ const EmployeeDetailsCard = ({ employee }: EmployeeDetailsCardProps) => {
     setSaving(true);
 
     try {
-      await editEmployeeById(employee.id, formData);
+      await editEmployeeById(employee.id, {
+        ...formData,
+        pin: formData.pin?.trim() ? formData.pin : undefined,
+      });
       toast.success("Employee updated successfully");
       router.refresh();
     } catch (error) {
@@ -178,6 +182,26 @@ const EmployeeDetailsCard = ({ employee }: EmployeeDetailsCardProps) => {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="pin">Workshop PIN</Label>
+              <Input
+                id="pin"
+                inputMode="numeric"
+                maxLength={5}
+                onChange={(event) =>
+                  setFormData((current) => ({
+                    ...current,
+                    pin: event.target.value,
+                  }))
+                }
+                pattern="\d{5}"
+                placeholder={
+                  employee.has_pin ? "Leave blank to keep current PIN" : "Set a 5-digit PIN"
+                }
+                value={formData.pin ?? ""}
+              />
             </div>
 
             <div className="flex flex-wrap justify-between gap-3 border-t pt-5">

@@ -9,6 +9,7 @@ export interface EmployeeDto {
   last_name: string;
   role: EmployeeRole;
   active: boolean;
+  has_pin?: boolean;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
@@ -18,6 +19,7 @@ export interface CreateEmployeeDto {
   first_name: string;
   last_name: string;
   role: EmployeeRole;
+  pin?: string;
 }
 
 export interface UpdateEmployeeDto {
@@ -25,4 +27,11 @@ export interface UpdateEmployeeDto {
   last_name?: string;
   role?: EmployeeRole;
   active?: boolean;
+  pin?: string;
+}
+
+export interface WorkshopTechnicianDto {
+  id: string;
+  first_name: string;
+  last_name: string;
 }

@@ -1,4 +1,11 @@
-import { JobStatus } from "../constants/job-status";
+import { ActorRole, JobAction, JobStatus } from "../constants/job-status";
+
+export interface AssignedTechnicianDto {
+  id: string;
+  first_name: string;
+  last_name: string;
+  role: string;
+}
 
 export interface CreateJobDto {
   vehicle_id: string;
@@ -19,6 +26,14 @@ export interface UpdateJobDto {
 
 export interface TransitionJobDto {
   targetStatus: JobStatus;
-  reason?: string;
+  note?: string;
   actorId?: string;
+  actorRole?: ActorRole;
+  actorEmployeeId?: string;
 }
+
+export interface AssignTechnicianDto {
+  technicianId: string | null;
+}
+
+export type { JobAction };

@@ -24,7 +24,10 @@ const errorMiddleware = (
   return res.status(500).json({
     success: false,
     code: ERROR_CODES.INTERNAL_SERVER_ERROR,
-    message: "An unexpected error occurred",
+    message:
+      !isProduction && err instanceof Error
+        ? err.message
+        : "An unexpected error occurred",
     ...(!isProduction &&
       err instanceof Error && {
         stack: err.stack,

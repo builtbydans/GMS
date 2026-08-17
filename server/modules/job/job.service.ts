@@ -1,6 +1,10 @@
 const jobRepository = require("./job.repository");
 const auditRepository = require("../audit/audit.repository");
 const jobUpdateService = require("../job/updates/job-update.service");
+const jobRaiseService = require("./raises/job-raise.service");
+const workItemService = require("./work-items/work-item.service");
+const invoiceService = require("../invoice/invoice.service");
+const employeeRepository = require("../employee/employee.repository");
 const { AppError, ERROR_CODES } = require("../../errors/AppError");
 import {
   CreateJobDto,
@@ -9,9 +13,14 @@ import {
 } from "../../types/job.types";
 import { QuoteLeadDto } from "../../types/lead.types";
 import {
+  ActorRole,
   JOB_STATUS,
   JOB_TRANSITIONS,
   JobStatus,
+  actionRequiresReason,
+  getAllowedActions,
+  getAllowedNextStatuses,
+  isManagerRole,
 } from "../../constants/job-status";
 
 const validateStatusTransition = (
@@ -32,20 +41,100 @@ const validateStatusTransition = (
   }
 };
 
-const getJobs = async () => {
-  return await jobRepository.getJobs();
+const validateWorkshopTransition = (
+  currentStatus: string,
+  nextStatus: JobStatus,
+  role?: ActorRole,
+) => {
+  const allowedNext = getAllowedNextStatuses(
+    currentStatus as JobStatus,
+    role,
+  );
+
+  if (!allowedNext.includes(nextStatus)) {
+    throw new AppError(
+      `Invalid job status transition: ${currentStatus} -> ${nextStatus}`,
+      409,
+      ERROR_CODES.INVALID_STATUS_TRANSITION,
+      { allowedNext },
+    );
+  }
 };
 
-const getJobById = async (id: string) => {
+const getJobs = async (role?: ActorRole, employeeId?: string) => {
+  const assignedTechnicianId =
+    role === "TECHNICIAN" ? employeeId : undefined;
+
+  const jobs = await jobRepository.getJobs(assignedTechnicianId);
+  const raisesByJobId = await jobRaiseService.getOpenRaisesByJobIds(
+    jobs.map((job: { id: string }) => job.id),
+  );
+
+  return jobs.map((job: any) => ({
+    ...job,
+    openRaise: raisesByJobId[job.id] ?? null,
+    canRaiseToManager:
+      role === "TECHNICIAN" &&
+      jobRaiseService.canTechnicianRaise(job, employeeId),
+  }));
+};
+
+const getJobById = async (
+  id: string,
+  role?: ActorRole,
+  employeeId?: string,
+) => {
   const job = await jobRepository.getJobById(id);
 
   if (!job) {
     throw new AppError("Job not found", 404);
   }
 
-  const updates = await jobUpdateService.getJobUpdatesByJobId(id);
+  if (
+    role === "TECHNICIAN" &&
+    job.assigned_technician_id !== employeeId
+  ) {
+    throw new AppError("Job not found", 404, ERROR_CODES.NOT_FOUND);
+  }
 
-  return { ...job, updates };
+  const canManageInvoice = role === "MANAGER" || role === "ADMIN";
+  const [updates, openRaise, workItems, invoice] = await Promise.all([
+    jobUpdateService.getJobUpdatesByJobId(id),
+    jobRaiseService.getOpenRaiseForJob(id),
+    workItemService.getWorkItemsForJob(
+      id,
+      workItemService.canEditWorkItems(job.status as JobStatus),
+    ),
+    canManageInvoice
+      ? invoiceService.getInvoiceByJobId(id, role)
+      : Promise.resolve(null),
+  ]);
+  const invoicePaid = invoiceService.isInvoicePaid(invoice);
+
+  return {
+    ...job,
+    updates,
+    openRaise,
+    workItems: workItems.items,
+    costs: workItems.costs,
+    invoice: canManageInvoice ? invoice : null,
+    invoiceConfirmed: invoiceService.isInvoiceConfirmed(invoice),
+    invoicePaid,
+    canGenerateInvoice:
+      canManageInvoice &&
+      (!invoice || invoice.status === "VOID") &&
+      workItems.items.length > 0 &&
+      invoiceService.isInvoiceEligibleStatus(job.status as JobStatus),
+    canConfirmInvoice:
+      canManageInvoice && invoice?.status === "DRAFT",
+    canRaiseToManager:
+      role === "TECHNICIAN" &&
+      jobRaiseService.canTechnicianRaise(job, employeeId),
+    allowedActions: getAllowedActions(job.status as JobStatus, role).filter(
+      (action: { targetStatus: JobStatus }) =>
+        action.targetStatus !== JOB_STATUS.COMPLETED || invoicePaid,
+    ),
+  };
 };
 
 const getLeads = async () => {
@@ -213,7 +302,45 @@ const transitionJob = async (id: string, command: TransitionJobDto) => {
     throw new AppError("Job not found", 404, ERROR_CODES.NOT_FOUND);
   }
 
-  validateStatusTransition(job.status, command.targetStatus);
+  if (
+    command.actorRole === "TECHNICIAN" &&
+    job.assigned_technician_id !== command.actorEmployeeId
+  ) {
+    throw new AppError(
+      "This job is not assigned to you",
+      403,
+      ERROR_CODES.FORBIDDEN,
+    );
+  }
+
+  validateWorkshopTransition(job.status, command.targetStatus, command.actorRole);
+
+  if (command.targetStatus === JOB_STATUS.COMPLETED) {
+    const invoicePaid = await invoiceService.jobHasPaidInvoice(id);
+
+    if (!invoicePaid) {
+      throw new AppError(
+        "The invoice must be marked paid before this job can be completed",
+        409,
+        ERROR_CODES.VALIDATION_ERROR,
+      );
+    }
+  }
+
+  if (
+    actionRequiresReason(
+      job.status as JobStatus,
+      command.targetStatus,
+      command.actorRole,
+    ) &&
+    !command.note?.trim()
+  ) {
+    throw new AppError(
+      "A reason is required for this action",
+      400,
+      ERROR_CODES.VALIDATION_ERROR,
+    );
+  }
 
   const updatedJob = await jobRepository.updateJobStatus(
     id,
@@ -223,8 +350,12 @@ const transitionJob = async (id: string, command: TransitionJobDto) => {
   await jobUpdateService.createWorkflowUpdate(
     id,
     command.targetStatus,
-    command.reason,
+    command.note,
   );
+
+  if (isManagerRole(command.actorRole)) {
+    await jobRaiseService.resolveOpenRaiseForJob(id, command.actorEmployeeId);
+  }
 
   await auditRepository.createAuditLog({
     entity_type: "job",
@@ -235,7 +366,70 @@ const transitionJob = async (id: string, command: TransitionJobDto) => {
     created_by: command.actorId ?? null,
   });
 
-  return updatedJob;
+  return getJobById(id, command.actorRole, command.actorEmployeeId);
+};
+
+const assignTechnician = async (
+  id: string,
+  technicianId: string | null,
+  role?: ActorRole,
+) => {
+  if (!isManagerRole(role)) {
+    throw new AppError(
+      "Only managers can assign technicians",
+      403,
+      ERROR_CODES.FORBIDDEN,
+    );
+  }
+
+  const job = await jobRepository.getJobById(id);
+
+  if (!job) {
+    throw new AppError("Job not found", 404, ERROR_CODES.NOT_FOUND);
+  }
+
+  if (technicianId) {
+    const technician = await employeeRepository.getEmployeeById(technicianId);
+
+    if (!technician || technician.role !== "TECHNICIAN") {
+      throw new AppError("Technician not found", 400, ERROR_CODES.VALIDATION_ERROR);
+    }
+  }
+
+  await jobRepository.assignTechnician(id, technicianId);
+
+  return getJobById(id, role);
+};
+
+const createWorkItem = async (
+  jobId: string,
+  payload: any,
+  role?: ActorRole,
+  employeeId?: string,
+) => {
+  await workItemService.createWorkItem(jobId, payload, role, employeeId);
+  return getJobById(jobId, role, employeeId);
+};
+
+const updateWorkItem = async (
+  jobId: string,
+  itemId: string,
+  payload: any,
+  role?: ActorRole,
+  employeeId?: string,
+) => {
+  await workItemService.updateWorkItem(jobId, itemId, payload, role, employeeId);
+  return getJobById(jobId, role, employeeId);
+};
+
+const deleteWorkItem = async (
+  jobId: string,
+  itemId: string,
+  role?: ActorRole,
+  employeeId?: string,
+) => {
+  await workItemService.deleteWorkItem(jobId, itemId, role, employeeId);
+  return getJobById(jobId, role, employeeId);
 };
 
 module.exports = {
@@ -251,4 +445,11 @@ module.exports = {
   deleteJobById,
   markLeadAsLost,
   transitionJob,
+  assignTechnician,
+  raiseToManager: jobRaiseService.raiseToManager,
+  acknowledgeRaise: jobRaiseService.acknowledgeRaise,
+  resolveRaise: jobRaiseService.resolveRaise,
+  createWorkItem,
+  updateWorkItem,
+  deleteWorkItem,
 };

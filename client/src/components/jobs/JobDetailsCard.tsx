@@ -1,107 +1,61 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   CalendarDays,
   CarFront,
   Check,
   CheckCircle2,
-  ChevronRight,
   CircleDollarSign,
   ClipboardList,
   Clock3,
-  LoaderCircle,
   Mail,
   Phone,
   UserRound,
   Wrench,
 } from "lucide-react";
-import { toast } from "sonner";
 
-import { getErrorMessage } from "@/lib/api-error";
-import { transitionJob } from "@/services/job.service";
 import StatusBadge from "@/components/StatusBadge";
+import InvoiceStatusBadge from "@/components/invoices/InvoiceStatusBadge";
+import JobInvoicePanel from "@/components/invoices/JobInvoicePanel";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   JOB_STATUS,
-  JOB_TRANSITIONS,
   JobStatus,
   WORKSHOP_STATUS_SEQUENCE,
   formatJobStatus,
 } from "@/constants/job-status";
 import { cn } from "@/lib/utils";
 import { JobSummaryDto } from "@/types/job.types";
+import { EmployeeDto } from "@/types/employee.types";
 import { formatRelativeDate } from "@/utils/date";
 import { formatRegistration } from "@/utils/formatRegistration";
 
 import ActivityTimeline from "./ActivityTimeline";
+import AssignmentPanel from "./AssignmentPanel";
+import JobActionPanel from "./JobActionPanel";
+import JobRaisePanel from "./JobRaisePanel";
+import WorkItemsPanel from "./WorkItemsPanel";
 
 interface JobDetailsProps {
   job: JobSummaryDto;
+  technicians?: EmployeeDto[];
 }
 
-const transitionCopy: Partial<
-  Record<JobStatus, { label: string; description: string }>
-> = {
-  [JOB_STATUS.AWAITING_PARTS]: {
-    label: "Mark as awaiting parts",
-    description: "Pause workshop progress until the required parts arrive.",
-  },
-  [JOB_STATUS.IN_PROGRESS]: {
-    label: "Start job",
-    description: "Move the vehicle into active workshop work.",
-  },
-  [JOB_STATUS.AWAITING_REVIEW]: {
-    label: "Send for review",
-    description: "Work is ready for an internal review.",
-  },
-  [JOB_STATUS.FINAL_INSPECTION]: {
-    label: "Begin final inspection",
-    description: "Move the vehicle into its final quality inspection.",
-  },
-  [JOB_STATUS.READY_FOR_COLLECTION]: {
-    label: "Ready for collection",
-    description: "Confirm that the vehicle can be collected by the customer.",
-  },
-  [JOB_STATUS.COMPLETED]: {
-    label: "Complete job",
-    description: "Close the workshop job after customer collection.",
-  },
-};
+const workshopIndexOf = (status: JobStatus) =>
+  (WORKSHOP_STATUS_SEQUENCE as readonly JobStatus[]).indexOf(status);
 
 const getWorkshopProgress = (status: JobStatus) => {
   if (status === JOB_STATUS.AWAITING_PARTS) {
-    return WORKSHOP_STATUS_SEQUENCE.indexOf(JOB_STATUS.BOOKED);
+    return workshopIndexOf(JOB_STATUS.BOOKED);
   }
 
-  return WORKSHOP_STATUS_SEQUENCE.indexOf(
-    status as (typeof WORKSHOP_STATUS_SEQUENCE)[number],
-  );
+  return workshopIndexOf(status);
 };
 
-const JobDetailsCard = ({ job }: JobDetailsProps) => {
-  const router = useRouter();
-  const [pendingStatus, setPendingStatus] = useState<JobStatus | null>(null);
-
-  const allowedTransitions = JOB_TRANSITIONS[job.status] ?? [];
+const JobDetailsCard = ({ job, technicians = [] }: JobDetailsProps) => {
   const progressIndex = getWorkshopProgress(job.status);
   const isWorkshopJob = progressIndex >= 0;
-
-  const handleTransition = async (nextStatus: JobStatus) => {
-    setPendingStatus(nextStatus);
-
-    try {
-      await transitionJob(job.id, nextStatus);
-
-      toast.success(`Job moved to ${formatJobStatus(nextStatus)}`);
-      router.refresh();
-    } catch (error) {
-      toast.error(getErrorMessage(error, "Unable to update job status"));
-    } finally {
-      setPendingStatus(null);
-    }
-  };
 
   return (
     <div className="grid gap-6 px-15 py-5 xl:grid-cols-[minmax(0)_22rem]">
@@ -112,6 +66,12 @@ const JobDetailsCard = ({ job }: JobDetailsProps) => {
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <StatusBadge status={job.status} />
+                  {job.invoice && (
+                    <InvoiceStatusBadge status={job.invoice.status} />
+                  )}
+                  {job.openRaise && (
+                    <Badge variant="outline">Needs manager</Badge>
+                  )}
                   <span className="text-sm text-muted-foreground">
                     {job.job_number}
                   </span>
@@ -146,7 +106,7 @@ const JobDetailsCard = ({ job }: JobDetailsProps) => {
               </div>
 
               <div className="overflow-x-auto pb-2">
-                <div className="flex min-w-[52rem] items-start">
+                <div className="flex min-w-[64rem] items-start">
                   {WORKSHOP_STATUS_SEQUENCE.map((status, index) => {
                     const isCurrent = status === job.status;
                     const isComplete = index < progressIndex;
@@ -302,9 +262,11 @@ const JobDetailsCard = ({ job }: JobDetailsProps) => {
                   Actual cost
                 </p>
                 <p className="mt-1 text-sm font-medium">
-                  {job.actual_cost
-                    ? `£${Number(job.actual_cost).toFixed(2)}`
-                    : "Not recorded"}
+                  {job.costs
+                    ? `£${Number(job.costs.actual).toFixed(2)}`
+                    : job.actual_cost
+                      ? `£${Number(job.actual_cost).toFixed(2)}`
+                      : "Not recorded"}
                 </p>
               </div>
             </CardContent>
@@ -325,65 +287,16 @@ const JobDetailsCard = ({ job }: JobDetailsProps) => {
           </Card>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Next action</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {allowedTransitions.length > 0 ? (
-              <div className="grid gap-3 md:grid-cols-2">
-                {allowedTransitions.map((nextStatus) => {
-                  const copy = transitionCopy[nextStatus];
-                  const isPending = pendingStatus === nextStatus;
-
-                  return (
-                    <button
-                      className="group flex items-center gap-4 rounded-lg border p-4 text-left transition-colors hover:border-foreground/20 hover:bg-muted/40 disabled:cursor-not-allowed disabled:opacity-60"
-                      disabled={pendingStatus !== null}
-                      key={nextStatus}
-                      onClick={() => handleTransition(nextStatus)}
-                      type="button"
-                    >
-                      <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                        {isPending ? (
-                          <LoaderCircle className="size-5 animate-spin" />
-                        ) : (
-                          <ChevronRight className="size-5" />
-                        )}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium">
-                          {copy?.label ?? formatJobStatus(nextStatus)}
-                        </p>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          {copy?.description ??
-                            `Move this job to ${formatJobStatus(nextStatus)}.`}
-                        </p>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="flex items-center gap-3 rounded-lg border bg-muted/30 p-4">
-                <CheckCircle2 className="size-5 text-emerald-600" />
-                <div>
-                  <p className="font-medium">
-                    {job.status === JOB_STATUS.COMPLETED
-                      ? "Workshop job completed"
-                      : "No workshop action available"}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Last updated {formatRelativeDate(job.updated_at)}.
-                  </p>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <WorkItemsPanel job={job} />
+        <JobActionPanel job={job} />
       </main>
 
       <aside className="space-y-4 xl:sticky xl:top-5 xl:self-start">
+        <JobInvoicePanel job={job} />
+        <JobRaisePanel job={job} variant="manager" />
+        {technicians.length > 0 && (
+          <AssignmentPanel job={job} technicians={technicians} />
+        )}
         <ActivityTimeline job={job} />
 
         {job.status === JOB_STATUS.COMPLETED && (

@@ -11,6 +11,10 @@ function isPublicPath(pathname: string) {
     return true;
   }
 
+  if (pathname === "/technician" || pathname.startsWith("/technician/")) {
+    return true;
+  }
+
   if (pathname.startsWith("/quotes/approve")) {
     return true;
   }

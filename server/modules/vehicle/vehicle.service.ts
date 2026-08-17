@@ -1,6 +1,6 @@
 const vehicleRepository = require("./vehicle.repository");
 const auditRepository = require("../audit/audit.repository");
-const AppError = require("../../errors/AppError");
+const { AppError } = require("../../errors/AppError");
 import { CreateVehicleDto, UpdateVehicleDto } from "../../types/vehicle.types";
 
 const getVehicles = async () => {

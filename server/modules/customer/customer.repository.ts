@@ -1,5 +1,5 @@
 import supabase from "../../config/db/supabase";
-const AppError = require("../../errors/AppError");
+const { AppError } = require("../../errors/AppError");
 
 const getCustomers = async () => {
   const { data, error } = await supabase

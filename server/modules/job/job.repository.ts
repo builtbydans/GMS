@@ -1,5 +1,5 @@
 import supabase from "../../config/db/supabase";
-const AppError = require("../../errors/AppError");
+const { AppError } = require("../../errors/AppError");
 import { QuoteLeadDto } from "../../types/lead.types";
 
 import {
@@ -11,26 +11,59 @@ import {
 
 import { CreateJobDto, UpdateJobDto } from "../../types/job.types";
 
-const getJobs = async () => {
-  const { data, error } = await supabase
-    .from("jobs")
-    .select(
-      `
-      *,
-      vehicles (
-        registration,
-        make,
-        model,
-        customers (
-          first_name,
-          last_name
-        )
-      )
-    `,
+const JOB_LIST_SELECT = `
+  *,
+  assigned_technician:employees!assigned_technician_id (
+    id,
+    first_name,
+    last_name,
+    role
+  ),
+  vehicles (
+    registration,
+    make,
+    model,
+    customers (
+      first_name,
+      last_name
     )
+  )
+`;
+
+const JOB_DETAIL_SELECT = `
+  *,
+  assigned_technician:employees!assigned_technician_id (
+    id,
+    first_name,
+    last_name,
+    role
+  ),
+  vehicles (
+    registration,
+    make,
+    model,
+    customers (
+      first_name,
+      last_name,
+      email,
+      phone
+    )
+  )
+`;
+
+const getJobs = async (assignedTechnicianId?: string) => {
+  let query = supabase
+    .from("jobs")
+    .select(JOB_LIST_SELECT)
     .is("deleted_at", null)
     .in("status", ACTIVE_JOB_STATUSES)
     .order("created_at", { ascending: false });
+
+  if (assignedTechnicianId) {
+    query = query.eq("assigned_technician_id", assignedTechnicianId);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     throw new Error(error.message);
@@ -42,19 +75,7 @@ const getJobs = async () => {
 const getJobById = async (id: string) => {
   const { data, error } = await supabase
     .from("jobs")
-    .select(
-      `*, vehicles (
-          registration,
-          make,
-          model,
-          customers (
-            first_name,
-            last_name,
-            email,
-            phone
-          )
-        )`,
-    )
+    .select(JOB_DETAIL_SELECT)
     .eq("id", id)
     .single();
 
@@ -254,6 +275,40 @@ const updateJobStatus = async (id: string, status: JobStatus) => {
   return data;
 };
 
+const assignTechnician = async (id: string, technicianId: string | null) => {
+  const { data, error } = await supabase
+    .from("jobs")
+    .update({
+      assigned_technician_id: technicianId,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .is("deleted_at", null)
+    .select(JOB_DETAIL_SELECT)
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+const updateActualCost = async (id: string, actualCost: number) => {
+  const { error } = await supabase
+    .from("jobs")
+    .update({
+      actual_cost: actualCost,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .is("deleted_at", null);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   getJobs,
   getJobById,
@@ -267,4 +322,6 @@ module.exports = {
   deleteJobById,
   markLeadAsLost,
   updateJobStatus,
+  assignTechnician,
+  updateActualCost,
 };

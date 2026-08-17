@@ -1,27 +1,17 @@
 import type { Response, NextFunction } from "express";
 import supabase from "../config/db/supabase";
 import type { AuthenticatedRequest } from "../types/auth.types";
+import { readWorkshopToken } from "../lib/workshop-token";
 
+const employeeRepository = require("../modules/employee/employee.repository");
 const { AppError, ERROR_CODES } = require("../errors/AppError");
 
-/**
- * Express middleware: prove the caller is a logged-in Supabase user.
- *
- * Flow:
- * 1. Read Authorization header → expect "Bearer <access_token>"
- * 2. Ask Supabase to verify that token (getUser)
- * 3. On success, put trusted identity on req.auth and call next()
- * 4. On failure, pass a 401 AppError to next(error)
- *
- * This does NOT protect routes by itself — you attach it to routers later (WSM-34).
- */
 const authenticateMiddleware = async (
   req: AuthenticatedRequest,
   _res: Response,
   next: NextFunction,
 ) => {
   try {
-    // Headers can be string | string[] | undefined in Express
     const header = req.headers.authorization;
 
     if (!header || typeof header !== "string") {
@@ -32,7 +22,6 @@ const authenticateMiddleware = async (
       );
     }
 
-    // Expected shape: "Bearer eyJhbGciOi..."
     const [scheme, token] = header.split(" ");
 
     if (scheme !== "Bearer" || !token) {
@@ -43,7 +32,19 @@ const authenticateMiddleware = async (
       );
     }
 
-    // CRITICAL: verify with Supabase — do not jwt.decode() and trust it
+    const workshopSession = readWorkshopToken(token);
+
+    if (workshopSession) {
+      req.auth = {
+        userId: workshopSession.employeeId,
+        email: "",
+        role: workshopSession.role,
+        employeeId: workshopSession.employeeId,
+      };
+      next();
+      return;
+    }
+
     const {
       data: { user },
       error,
@@ -57,13 +58,19 @@ const authenticateMiddleware = async (
       );
     }
 
-    // Trusted context for controllers — never take userId from the body
+    const employee = await employeeRepository.getEmployeeByUserId(user.id);
+    const role = employee?.role?.trim().toUpperCase();
+
     req.auth = {
       userId: user.id,
       email: user.email ?? "",
+      employeeId: employee?.id,
+      role:
+        role === "MANAGER" || role === "ADMIN" || role === "TECHNICIAN"
+          ? role
+          : undefined,
     };
 
-    // Success: hand off to the next middleware / route handler — exactly once
     next();
   } catch (err) {
     next(err);

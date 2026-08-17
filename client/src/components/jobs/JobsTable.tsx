@@ -59,6 +59,20 @@ export function JobsTable({ jobs }: JobsTableProps) {
           </Button>
 
           <Button
+            variant={statusFilter === "READY_FOR_COLLECTION" ? "default" : "outline"}
+            onClick={() => setStatusFilter("READY_FOR_COLLECTION")}
+          >
+            Ready for collection
+          </Button>
+
+          <Button
+            variant={statusFilter === "INVOICED" ? "default" : "outline"}
+            onClick={() => setStatusFilter("INVOICED")}
+          >
+            Invoiced
+          </Button>
+
+          <Button
             variant={statusFilter === "COMPLETED" ? "default" : "outline"}
             onClick={() => setStatusFilter("COMPLETED")}
           >
@@ -74,6 +88,7 @@ export function JobsTable({ jobs }: JobsTableProps) {
             <TableHead>Customer</TableHead>
             <TableHead>Vehicle</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Technician</TableHead>
             <TableHead>Created</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -82,7 +97,7 @@ export function JobsTable({ jobs }: JobsTableProps) {
         <TableBody>
           {filteredJobs.length === 0 ? (
             <TableRow>
-              <TableCell className="h-32 text-center" colSpan={6}>
+              <TableCell className="h-32 text-center" colSpan={7}>
                 <div className="flex flex-col items-center gap-2 text-muted-foreground">
                   <Wrench className="size-8" />
                   <p>No jobs found.</p>
@@ -112,7 +127,20 @@ export function JobsTable({ jobs }: JobsTableProps) {
                 </TableCell>
 
                 <TableCell>
-                  <StatusBadge status={job.status} />
+                  <div className="flex flex-col items-start gap-1">
+                    <StatusBadge status={job.status} />
+                    {job.openRaise && (
+                      <span className="text-xs font-medium text-amber-700 dark:text-amber-400">
+                        Raised
+                      </span>
+                    )}
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  {job.assigned_technician
+                    ? `${job.assigned_technician.first_name} ${job.assigned_technician.last_name}`
+                    : "Unassigned"}
                 </TableCell>
 
                 <TableCell>
