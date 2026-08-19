@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function TechnicianLoginPage() {
   return (
-    <div className="flex min-h-svh flex-col bg-muted p-6 md:p-10">
+    <div className="flex min-h-svh flex-col bg-gradient-to-b from-accent/60 via-background to-background p-6 md:p-10">
       <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center gap-8">
         <Link
           className="flex items-center justify-center gap-2 font-medium"

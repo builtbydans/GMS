@@ -7,7 +7,7 @@ import env from "./env";
  * Quote-approval is reserved for a later ticket.
  */
 function isPublicPath(pathname: string) {
-  if (pathname === "/login" || pathname.startsWith("/login/")) {
+  if (pathname === "/" || pathname === "/login" || pathname.startsWith("/login/")) {
     return true;
   }
 

@@ -73,7 +73,7 @@ export function LoginForm({
       }
 
       toast.success("Signed in");
-      router.push("/");
+      router.push("/dashboard");
       router.refresh();
     } finally {
       setLoading(false);

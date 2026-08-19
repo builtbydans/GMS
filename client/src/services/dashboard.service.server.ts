@@ -1,6 +1,9 @@
 import "server-only";
 
-import { apiFetch } from "@/lib/api.server";
-import { createDashboardService } from "@/services/dashboard.api";
+import { requireServerAuth } from "@/lib/server-auth";
+import * as dashboardService from "@/server/modules/dashboard/dashboard.service";
 
-export const { getDashboardStats } = createDashboardService(apiFetch);
+export async function getDashboardStats() {
+  await requireServerAuth();
+  return dashboardService.getDashboardStats();
+}

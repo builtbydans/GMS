@@ -70,7 +70,7 @@ const KpiCard = ({ title, value, description, icon: Icon }: KpiCardProps) => (
           {value}
         </CardTitle>
       </div>
-      <div className="rounded-md border bg-background p-2 text-muted-foreground">
+      <div className="rounded-md border border-primary/15 bg-primary/10 p-2 text-primary">
         <Icon className="size-4" />
       </div>
     </CardHeader>

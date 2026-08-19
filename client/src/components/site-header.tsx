@@ -37,7 +37,7 @@ export function SiteHeader({ user }: { user: NavUserData | null }) {
           <button
             type="button"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="relative flex items-center justify-center h-8 w-8 rounded-md cursor-pointer"
+            className="relative flex items-center justify-center h-8 w-8 rounded-md cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors"
           >
             <SunIcon className="absolute size-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
 

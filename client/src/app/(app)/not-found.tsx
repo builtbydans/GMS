@@ -5,7 +5,7 @@ const NotFound = () => {
   return (
     <main className="flex min-h-screen items-center justify-center px-6">
       <div className="max-w-md text-center">
-        <p className="text-sm font-medium text-muted-foreground">404</p>
+        <p className="text-sm font-medium text-primary">404</p>
 
         <h1 className="mt-2 text-3xl font-bold">Page Not Found</h1>
 
@@ -14,7 +14,7 @@ const NotFound = () => {
         </p>
 
         <Button asChild className="mt-6">
-          <Link href="/">Return to Dashboard</Link>
+          <Link href="/dashboard">Return to Dashboard</Link>
         </Button>
       </div>
     </main>

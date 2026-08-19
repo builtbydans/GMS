@@ -15,7 +15,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const showUnauthorized = params.error === "unauthorized";
 
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
+    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-gradient-to-b from-accent/60 via-background to-background p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
         {showUnauthorized && (
           <Alert variant="destructive">

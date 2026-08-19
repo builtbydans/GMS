@@ -12,7 +12,9 @@ The project serves as my flagship portfolio piece and continues to evolve as I l
 
 Frontend + API
 
-> https://workshop-eight-pi.vercel.app
+> https://workshop-ecru-eight.vercel.app
+
+Public landing page at `/` · Staff dashboard at `/dashboard` after login.
 
 ---
 
@@ -455,6 +457,8 @@ npm run dev
 The API is available under `/api/*` on the same Next.js process (default `http://localhost:3000`).
 
 Copy `client/.env.example` to `client/.env.local` and fill in Supabase values, including the server-only `SUPABASE_URL` and `SUPABASE_SECRET_KEY`.
+
+Reset demo data locally with `supabase db reset` (see [`supabase/README.md`](./supabase/README.md)).
 
 ## Tests
 

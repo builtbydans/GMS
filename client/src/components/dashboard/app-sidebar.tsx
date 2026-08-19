@@ -36,7 +36,7 @@ const data = {
   navMain: [
     {
       title: "Home",
-      url: "/",
+      url: "/dashboard",
       icon: <LayoutDashboardIcon />,
     },
     {
@@ -156,8 +156,10 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
               asChild
               className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
-              <Link href="/">
-                <CommandIcon className="size-5!" />
+              <Link href="/dashboard">
+                <div className="flex size-5! items-center justify-center rounded-sm bg-primary text-primary-foreground">
+                  <CommandIcon className="size-3.5!" />
+                </div>
                 <span className="text-base font-semibold">Workshop</span>
               </Link>
             </SidebarMenuButton>
