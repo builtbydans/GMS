@@ -10,13 +10,9 @@ The project serves as my flagship portfolio piece and continues to evolve as I l
 
 # Live Demo
 
-Frontend
+Frontend + API
 
 > https://workshop-eight-pi.vercel.app
-
-Backend API
-
-> Railway
 
 ---
 
@@ -60,9 +56,10 @@ Rather than creating isolated CRUD pages, the aim is to model how an actual gara
 
 ## Deployment
 
-- Vercel
-- Railway
+- Vercel (Next.js UI + API Route Handlers)
 - Supabase
+
+The original Express API is preserved under [`archive/express-server/`](./archive/express-server/) for reference.
 
 ---
 
@@ -77,15 +74,17 @@ Components
     ↓
 Services
     ↓
-REST API
-```
-
-## Backend
-
-```
-Routes
+Next.js Route Handlers (/api/*)
     ↓
-Controllers
+Domain services / repositories
+    ↓
+Supabase
+```
+
+## Backend (domain layer)
+
+```
+Route Handlers
     ↓
 Services
     ↓
@@ -95,6 +94,8 @@ Supabase
 ```
 
 This layered architecture keeps HTTP handling, business logic and database access separated, making the application easier to extend and maintain.
+
+The earlier Express HTTP shell (`app.ts`, routers, controllers, middleware) is archived so the portfolio can still discuss that implementation.
 
 ---
 
@@ -220,29 +221,19 @@ Jobs include an activity timeline to display important workflow events and progr
 
 ```
 client/
-
     app/
+        api/          # Next.js Route Handlers
     components/
     services/
+    server/           # Domain layer (services, repositories, schemas)
     types/
     utils/
 
-server/
+archive/
+    express-server/   # Frozen Express API (interview / history)
 
-    modules/
-        customer/
-        vehicle/
-        lead/
-        job/
-        invoice/
-        employee/
-        dashboard/
-        audit/
-
-    config/
-    middleware/
-    errors/
-    types/
+supabase/
+    migrations/
 ```
 
 ---
@@ -295,6 +286,7 @@ These include:
 - Shared TypeScript DTOs
 - Consistent API responses
 - Separation between frontend and backend deployments
+- Later consolidation onto Vercel Route Handlers while preserving the Express implementation in `archive/`
 
 ---
 
@@ -313,12 +305,13 @@ Some of the areas I've explored while developing this project include:
 - Production deployment
 - Environment management
 - Vercel deployment
-- Railway deployment
+- Railway deployment (earlier Express hosting)
+- Migrating an Express API onto Next.js Route Handlers without rewriting domain logic
 - Debugging production-only issues
 - Module interoperability between CommonJS and ES Modules
 - Working with Supabase in production
 
-One particularly valuable learning experience was deploying Workshop publicly. This involved configuring production builds, environment variables, deployment pipelines and diagnosing issues across multiple services.
+One particularly valuable learning experience was deploying Workshop publicly. This involved configuring production builds, environment variables, deployment pipelines and diagnosing issues across multiple services. A later iteration moved the Express API onto Next.js Route Handlers so the whole stack could run on Vercel while keeping the original Express code archived for reference.
 
 ---
 
@@ -451,20 +444,23 @@ Future development will focus less on adding CRUD pages and more on improving op
 
 # Running Locally
 
-## Backend
-
-```bash
-cd server
-npm install
-npm run dev
-```
-
-## Frontend
+## App (UI + API)
 
 ```bash
 cd client
 npm install
 npm run dev
+```
+
+The API is available under `/api/*` on the same Next.js process (default `http://localhost:3000`).
+
+Copy `client/.env.example` to `client/.env.local` and fill in Supabase values, including the server-only `SUPABASE_URL` and `SUPABASE_SECRET_KEY`.
+
+## Tests
+
+```bash
+cd client
+npm test
 ```
 
 ---

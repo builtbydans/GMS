@@ -58,9 +58,15 @@ function toApiError(status: number, payload: unknown): ApiError {
   return new ApiError("Request failed", status, "INTERNAL_SERVER_ERROR");
 }
 
+type ApiFetchOptions = {
+  /** Forward incoming request headers (e.g. cookies) on server-side fetches. */
+  getExtraHeaders?: () => Promise<HeadersInit | undefined>;
+};
+
 export function createApiFetch(
   getAccessToken: () => Promise<string | null>,
   onUnauthorized: () => void = redirectToLogin,
+  options?: ApiFetchOptions,
 ): ApiFetch {
   return async <T>(path: string, init: RequestInit = {}): Promise<T> => {
     const headers = new Headers(init.headers);
@@ -74,12 +80,22 @@ export function createApiFetch(
       headers.set("Authorization", `Bearer ${token}`);
     }
 
+    const extraHeaders = await options?.getExtraHeaders?.();
+    if (extraHeaders) {
+      new Headers(extraHeaders).forEach((value, key) => {
+        if (!headers.has(key)) {
+          headers.set(key, value);
+        }
+      });
+    }
+
     let response: Response;
 
     try {
       response = await fetch(`${API_URL}${path}`, {
         ...init,
         headers,
+        cache: init.cache ?? "no-store",
       });
     } catch {
       throw new ApiError(

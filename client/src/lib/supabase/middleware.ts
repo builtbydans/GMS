@@ -68,6 +68,11 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
+  // Route Handlers authenticate via Bearer token or cookies themselves.
+  if (pathname.startsWith("/api")) {
+    return supabaseResponse;
+  }
+
   if (!user && !isPublicPath(pathname)) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
